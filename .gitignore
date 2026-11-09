@@ -1,0 +1,15 @@
+# 강의 자료·참고문헌 PDF, 실습 zip은 저장소에 올리지 않는다
+261105_1주차_물성예측_슬라이드.pdf
+Context/*.pdf
+*.zip
+
+# Python / Jupyter
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# OS / 편집기
+.DS_Store
+Thumbs.db
+desktop.ini
+~$*

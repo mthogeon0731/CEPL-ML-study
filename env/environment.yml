@@ -1,0 +1,27 @@
+# mlstudy environment — same packages as slide 43 (declarative form, for re-creating / sharing with teammates)
+#
+#   conda env create -f environment.yml        # create
+#   conda env update -f environment.yml --prune  # update an existing one
+#
+# slide 43 order is kept: conda-forge packages first, pip packages last.
+# The pip line uses --extra-index-url for the CPU PyTorch build; on Windows the PyPI "torch" wheel is CPU-only
+# as well, so either index gives the same result.  (Linux: PyPI torch would pull the large CUDA build instead.)
+name: mlstudy
+channels:
+  - conda-forge
+  - nodefaults
+dependencies:
+  - python=3.11
+  - rdkit
+  - scikit-learn
+  - xgboost
+  - pandas
+  - matplotlib
+  - jupyter
+  - ipykernel
+  - pip
+  - pip:
+      - --extra-index-url https://download.pytorch.org/whl/cpu
+      - torch
+      - torch_geometric
+      - shap

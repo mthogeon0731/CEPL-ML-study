@@ -1,0 +1,33 @@
+/usr/local/lib/python3.13/site-packages/torch/jit/_script.py:1491: FutureWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+[load_data] mp: 5,000 rows, unit = K
+split reproduced: train 4000 / validate 500 / test 500
+train mean [K] 365.8728724999999
+features (5000, 217) (5000, 2048) (30 s)
+Descriptor Ridge        MAE=44.167
+Descriptor kNN          MAE=51.358
+Descriptor SVR          MAE=43.331
+Descriptor RandomForest MAE=40.496
+Descriptor XGBoost      MAE=36.376
+Descriptor MLP          MAE=48.338
+MorganFP   Ridge        MAE=99.121
+MorganFP   kNN          MAE=132.343
+MorganFP   SVR          MAE=55.340
+MorganFP   RandomForest MAE=51.985
+MorganFP   XGBoost      MAE=48.065
+MorganFP   MLP          MAE=149.020
+       feature                model     MAE    RMSE     R2    sec
+             - baseline(train mean)  79.742     NaN    NaN  0.000
+    Descriptor                Ridge  44.167  58.332  0.359  0.031
+    Descriptor                  kNN  51.358  65.798  0.184  0.046
+    Descriptor                  SVR  43.331  58.006  0.366  2.024
+    Descriptor         RandomForest  40.496  52.644  0.478 32.116
+    Descriptor              XGBoost  36.376  47.541  0.574  4.930
+    Descriptor                  MLP  48.338  64.131  0.225 10.934
+      MorganFP                Ridge  99.121 130.149 -2.192  0.618
+      MorganFP                  kNN 132.343 152.346 -3.373  0.249
+      MorganFP                  SVR  55.340  72.556  0.008 15.622
+      MorganFP         RandomForest  51.985  68.980  0.103 59.964
+      MorganFP              XGBoost  48.065  63.627  0.237  4.374
+      MorganFP                  MLP 149.020 173.441 -4.668 21.721
+Graph (147/16)       GIN (train.py)  41.806  54.504  0.440    NaN

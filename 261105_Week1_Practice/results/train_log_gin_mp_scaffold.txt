@@ -1,0 +1,19 @@
+python train.py --prop mp --split scaffold  (start Mon Nov  9 00:51:03 KST 2026)  [추가: 2주차 옵션 미리 실행 — 과제 2단계의 기본 실행은 train_log_gin_mp.txt]
+/usr/local/lib/python3.13/site-packages/torch/jit/_script.py:1491: FutureWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+[load_data] mp: 5,000 rows, unit = K
+[gen_dataset] 5,000 graphs, node features = 147, edge features = 16
+[split_dataset:scaffold] train 4,000 / validate 500 / test 500
+[model] mp_GNN-GIN_mean_scaffold: 147,009 parameters
+  epoch   0  train loss 0.6945  val MAE 51.612  lr 1.0e-03  *
+  epoch   1  train loss 0.4585  val MAE 50.756  lr 1.0e-03  *
+  epoch   2  train loss 0.3997  val MAE 48.232  lr 1.0e-03  *
+  epoch   3  train loss 0.3568  val MAE 47.604  lr 1.0e-03  *
+  epoch   5  train loss 0.3209  val MAE 45.378  lr 1.0e-03  *
+  epoch  10  train loss 0.2519  val MAE 46.994  lr 1.0e-03
+  epoch  14  train loss 0.2454  val MAE 44.159  lr 1.0e-03  *
+  epoch  20  train loss 0.2191  val MAE 52.402  lr 1.0e-03
+  epoch  30  train loss 0.1694  val MAE 46.093  lr 8.0e-04
+  epoch  40  train loss 0.1445  val MAE 46.187  lr 6.4e-04
+[test] mp_GNN-GIN_mean_scaffold: MAE 41.806 | RMSE 54.504 | R2 0.440 | baseline MAE 79.742 | 45 epochs, 345 s
+done rc=0 at Mon Nov  9 00:57:03 KST 2026

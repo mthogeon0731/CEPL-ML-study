@@ -1,0 +1,32 @@
+[check_env_log] 2026-11-08 17:15:21.15
+conda: C:\Users\mthog\miniforge3\condabin\conda.bat
+conda 26.9.4
+
+# conda environments:
+#
+# * -> active
+# + -> frozen
+base                     C:\Users\mthog\miniforge3
+mlstudy                  C:\Users\mthog\miniforge3\envs\mlstudy
+
+--- check_env.py (mlstudy) ---
+C:\Users\mthog\miniforge3\envs\mlstudy\Lib\site-packages\torch\jit\_script.py:1491: FutureWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+python 3.11.18 (Windows AMD64)  prefix=C:\Users\mthog\miniforge3\envs\mlstudy
+package             version       status   role
+numpy               2.4.6         ok       배열 X, 오차 계산
+pandas              3.1.1         ok       data/*.csv, 결과표
+matplotlib          3.11.2        ok       parity plot, 학습곡선
+RDKit               2026.09.1     ok       SMILES, 기술자, Morgan 지문
+scikit-learn        1.9.1         ok       Ridge, kNN, SVR, RF, MLP, 분할
+XGBoost             3.4.2         ok       부스팅 나무
+PyTorch             2.15.0+cpu    ok       GNN 학습 (train.py)
+PyTorch Geometric   2.8.1         ok       분자 그래프, GIN (models.py)
+shap                0.51.0        ok       4주차 XAI
+[smoke] piperidine x: (6, 10)  edge_index: (2, 12)  GINConv out: (6, 16)  readout h_G: (1, 16)  torch threads=10
+ok
+exit code 0
+--- jupyter kernels ---
+Available kernels:
+  python3    C:\Users\mthog\miniforge3\envs\mlstudy\share\jupyter\kernels\python3
+  mlstudy    C:\Users\mthog\AppData\Roaming\jupyter\kernels\mlstudy

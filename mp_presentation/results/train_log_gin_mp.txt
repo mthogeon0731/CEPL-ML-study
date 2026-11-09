@@ -1,0 +1,41 @@
+python train.py --prop mp  (start Mon Nov  9 00:45:56 KST 2026)
+/usr/local/lib/python3.13/site-packages/torch/jit/_script.py:1491: FutureWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+[load_data] mp: 5,000 rows, unit = K
+[gen_dataset] 5,000 graphs, node features = 147, edge features = 16
+[split_dataset:random] train 4,000 / validate 500 / test 500
+[model] mp_GNN-GIN_mean_random: 147,009 parameters
+  epoch   0  train loss 0.6713  val MAE 53.897  lr 1.0e-03  *
+  epoch   1  train loss 0.4769  val MAE 48.314  lr 1.0e-03  *
+  epoch   2  train loss 0.4144  val MAE 41.514  lr 1.0e-03  *
+  epoch   5  train loss 0.3473  val MAE 40.984  lr 1.0e-03  *
+  epoch   7  train loss 0.3297  val MAE 40.931  lr 1.0e-03  *
+  epoch   8  train loss 0.3089  val MAE 39.458  lr 1.0e-03  *
+  epoch   9  train loss 0.3059  val MAE 39.052  lr 1.0e-03  *
+  epoch  10  train loss 0.3326  val MAE 41.967  lr 1.0e-03
+  epoch  12  train loss 0.2852  val MAE 38.001  lr 1.0e-03  *
+  epoch  13  train loss 0.2774  val MAE 37.847  lr 1.0e-03  *
+  epoch  15  train loss 0.2719  val MAE 36.855  lr 1.0e-03  *
+  epoch  18  train loss 0.2524  val MAE 36.256  lr 1.0e-03  *
+  epoch  20  train loss 0.2507  val MAE 37.293  lr 1.0e-03
+  epoch  22  train loss 0.2270  val MAE 35.566  lr 1.0e-03  *
+  epoch  24  train loss 0.2440  val MAE 35.198  lr 1.0e-03  *
+  epoch  30  train loss 0.2011  val MAE 35.641  lr 1.0e-03
+  epoch  31  train loss 0.1939  val MAE 34.933  lr 1.0e-03  *
+  epoch  37  train loss 0.1885  val MAE 34.756  lr 1.0e-03  *
+  epoch  40  train loss 0.1763  val MAE 33.965  lr 1.0e-03  *
+  epoch  50  train loss 0.1631  val MAE 35.191  lr 1.0e-03
+  epoch  60  train loss 0.1420  val MAE 34.756  lr 8.0e-04
+  epoch  65  train loss 0.1276  val MAE 33.243  lr 6.4e-04  *
+  epoch  70  train loss 0.1268  val MAE 33.405  lr 6.4e-04
+  epoch  80  train loss 0.1127  val MAE 34.256  lr 5.1e-04
+  epoch  84  train loss 0.1152  val MAE 33.195  lr 5.1e-04  *
+  epoch  90  train loss 0.1064  val MAE 33.657  lr 5.1e-04
+  epoch 100  train loss 0.0971  val MAE 34.133  lr 4.1e-04
+  epoch 110  train loss 0.0879  val MAE 33.849  lr 3.3e-04
+  epoch 114  train loss 0.0860  val MAE 32.860  lr 3.3e-04  *
+  epoch 120  train loss 0.0875  val MAE 34.250  lr 3.3e-04
+  epoch 130  train loss 0.0801  val MAE 33.794  lr 2.6e-04
+  epoch 140  train loss 0.0762  val MAE 34.010  lr 2.1e-04
+[test] mp_GNN-GIN_mean_random: MAE 36.520 | RMSE 50.921 | R2 0.711 | baseline MAE 75.151 | 145 epochs, 240 s
+done rc=0 at Mon Nov  9 00:50:10 KST 2026

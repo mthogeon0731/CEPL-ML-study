@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>mp(녹는점) 예측 모델 7종 학습 노트 — 어떻게 학습하고, 왜 이 모델이어야 했나</title>
+<style>
+@page { size: A4; margin: 17mm 16mm 18mm 16mm; }
+html { font-size: 10.4pt; }
+body { font-family: 'Noto Sans CJK KR', 'Noto Sans KR', sans-serif; color: #1a2230; line-height: 1.62; margin: 0; }
+h1 { font-size: 24pt; line-height: 1.25; margin: 0 0 6pt 0; color: #1b2a41; }
+h2 { font-size: 16.5pt; margin: 0 0 8pt 0; padding: 6pt 0 5pt 0; border-bottom: 2.5px solid #1b2a41; color: #1b2a41; page-break-after: avoid; }
+h3 { font-size: 12.5pt; margin: 14pt 0 5pt 0; color: #1b2a41; page-break-after: avoid; }
+h4 { font-size: 11pt; margin: 11pt 0 3pt 0; color: #2a4a7a; page-break-after: avoid; }
+p { margin: 0 0 6pt 0; text-align: justify; }
+ul, ol { margin: 0 0 6pt 0; padding-left: 18pt; }
+li { margin-bottom: 2.5pt; }
+table { border-collapse: collapse; width: 100%; margin: 6pt 0 9pt 0; font-size: 9.2pt; page-break-inside: avoid; }
+th, td { border: 1px solid #c9d0da; padding: 3.5pt 5pt; vertical-align: top; text-align: left; }
+th { background: #e8edf4; font-weight: 700; color: #1b2a41; }
+tr:nth-child(even) td { background: #f7f8fa; }
+.num { text-align: right; font-variant-numeric: tabular-nums; }
+.formula { font-family: 'Noto Sans CJK KR', sans-serif; background: #f3f5f9; border-left: 3px solid #2a78d6; padding: 6pt 10pt; margin: 6pt 0 8pt 0; font-size: 10.2pt; line-height: 1.7; page-break-inside: avoid; }
+.formula .v { color: #52514e; font-size: 9.2pt; display: block; margin-top: 3pt; }
+.code { font-family: 'Noto Sans Mono CJK KR', 'DejaVu Sans Mono', monospace; font-size: 8.8pt; background: #1b2a41; color: #e8edf4; padding: 7pt 10pt; border-radius: 4pt; margin: 6pt 0 8pt 0; white-space: pre-wrap; line-height: 1.5; page-break-inside: avoid; }
+.badge { display: inline-block; font-size: 8.2pt; font-weight: 700; padding: 0 5pt; border-radius: 3pt; margin-right: 4pt; vertical-align: middle; }
+.ppt { background: #dfe9f7; color: #1b4f91; }
+.add { background: #fde7dc; color: #9a3b12; }
+.box { border: 1px solid #c9d0da; border-radius: 5pt; padding: 7pt 10pt; margin: 7pt 0 9pt 0; page-break-inside: avoid; }
+.box.key { background: #eef4fc; border-color: #9dbce8; }
+.box.warn { background: #fff5ee; border-color: #f0b89a; }
+.box.result { background: #eefaf4; border-color: #9ad6b8; }
+.box h4 { margin-top: 0; }
+.two { display: flex; gap: 10pt; }
+.two > div { flex: 1; }
+.pros { background: #eefaf4; border: 1px solid #9ad6b8; border-radius: 5pt; padding: 6pt 9pt; }
+.cons { background: #fff5ee; border: 1px solid #f0b89a; border-radius: 5pt; padding: 6pt 9pt; }
+.pros h4, .cons h4 { margin-top: 0; }
+.fig { text-align: center; margin: 8pt 0 10pt 0; page-break-inside: avoid; }
+.fig img { max-width: 100%; border: 1px solid #d9dee6; border-radius: 4pt; }
+.fig .cap { font-size: 8.8pt; color: #52514e; margin-top: 3pt; text-align: left; }
+.small { font-size: 8.8pt; color: #52514e; }
+.pb { page-break-before: always; }
+.cover { padding-top: 60pt; }
+.cover .sub { font-size: 13pt; color: #3f4a5a; margin: 8pt 0 20pt 0; }
+.cover .meta { font-size: 9.6pt; color: #52514e; border-top: 1px solid #c9d0da; padding-top: 10pt; margin-top: 30pt; }
+.toc li { margin-bottom: 3pt; }
+.q { background: #f7f8fa; border: 1px dashed #9aa5b5; border-radius: 5pt; padding: 6pt 10pt; margin: 7pt 0; page-break-inside: avoid; }
+.q h4 { margin-top: 0; color: #52514e; }
+.chk { color: #1baf7a; font-weight: 700; }
+.bad { color: #c2410c; font-weight: 700; }
+sub, sup { line-height: 0; }
+</style>
+</head>
+<body>
+
+<!-- ============================================================ 표지 -->
+<div class="cover">
+<p class="small">CEPL ML 스터디 · 1주차 · 팀 물성 mp(녹는점) · 학습 노트</p>
+<h1>mp(녹는점) 예측 모델 7종 학습 노트</h1>
+<p class="sub">Ridge · kNN · SVR · Random Forest · XGBoost · MLP · GIN — 각 모델이 <b>어떻게 학습하고</b>, <b>왜 이 문제에 이 모델을 넣어야 했는지</b>, <b>장단점과 정합성</b>, 그리고 <b>우리 결과가 그 판단을 지지했는지</b></p>
+
+<div class="box key">
+<h4>이 노트의 틀</h4>
+<p>머신러닝은 "모델 이름을 외우는 것"이 아니라 <b>문제 정의 → 데이터·표현 → 모델(가설) → 손실함수 → 최적화 → 일반화 → 평가 → 응용</b>의 연결을 이해하는 것이다. 모든 모델 절은 같은 순서로 쓴다: ① 한 줄 직관 → ② 가정과 가설 함수(수식·shape) → ③ 손실과 학습 과정 → ④ 하이퍼파라미터의 영향 → ⑤ 노트북의 실제 설정 → ⑥ 장점·단점 → ⑦ mp에서의 정합성·당위성 → ⑧ 우리 결과와 해석 → ⑨ 흔한 실수·자가진단.</p>
+</div>
+
+<p><span class="badge ppt">슬라이드 N쪽</span> 1주차 강의자료에 있는 내용 (쪽 번호는 자료 기준). <span class="badge add">추가</span> 자료에 없는 일반 머신러닝·통계 지식, 또는 우리가 따로 계산·검증한 내용. 두 가지를 섞어 "자료에 있는 것처럼" 말하지 않는다.</p>
+
+<div class="meta">
+<p><b>수치 출처</b>: 교수님 노트북 <code>01_multi_model_comparison.ipynb</code>를 <code>PROP='mp'</code>(표본 5,000, seed 42, 80/20 분할)로 실행한 결과(<code>mp_presentation/results/results_mp.csv</code>)와 <code>python train.py --prop mp</code>(80/10/10) 결과(<code>summary.csv</code>). 실행 2026-11-09, 기록은 <code>results/run_notes.md</code>. 값은 모두 <b>test MAE [K]</b>, 분할(random / scaffold)과 함께 적는다.</p>
+<p><b>데이터</b>: Bradley Open Melting Point, 19,945 분자, 단위 K, 68–790 K, 중앙값 380 K, 평균 378.5 ± 92 K. 반복 측정 4,679종 중 86종은 값 차이 ≥ 50 K → 측정 잡음이 어떤 모델도 넘지 못하는 오차 하한을 만든다.</p>
+</div>
+</div>
+
+<!-- ============================================================ 차례 -->
+<div class="pb"></div>
+<h2>차례</h2>
+<ol class="toc">
+<li><b>공통 뼈대</b> — mp 예측은 어떤 머신러닝 문제인가: 문제 정의, 손실 vs 평가지표, 기준선, 분할, 스케일링, "튜닝 없음"의 뜻</li>
+<li><b>왜 이 7개 모델인가</b> — 선택의 논리(단순 → 복잡, 표현과의 궁합, 귀납 편향의 다양성)와 mp라는 물성에 대한 당위성</li>
+<li><b>Ridge 회귀</b> — 특징의 가중합 + L2 벌점</li>
+<li><b>kNN 회귀</b> — 비슷한 분자 k개의 평균</li>
+<li><b>SVR</b> — 커널로 비선형, ε 밖의 오차만 벌점</li>
+<li><b>Random Forest</b> — 깊은 나무 여러 개의 평균(배깅)</li>
+<li><b>XGBoost</b> — 앞 나무의 오차를 다음 나무가 보정(부스팅)</li>
+<li><b>MLP</b> — 층을 쌓은 비선형 함수, GNN으로 가는 다리</li>
+<li><b>GIN</b> — 분자 그래프에서 표현을 직접 배우는 신경망</li>
+<li><b>모델 비교표</b> — 가정·가설 공간·손실·최적화·복잡도·비용·해석성·결과</li>
+<li><b>표현 × 모델의 궁합</b> — 결과가 왜 그렇게 나왔는가 (기술자 vs 지문, 희소 비트 문제)</li>
+<li><b>결론</b> — 이 주제에서 모델 선택의 당위성 종합, 2주차에 바꿀 것</li>
+<li><b>부록</b> — 결과표 전체, 그림, 용어</li>
+</ol>
+
+<!-- ============================================================ 1. 공통 뼈대 -->
+<div class="pb"></div>
+<h2>1. 공통 뼈대 — mp 예측은 어떤 머신러닝 문제인가</h2>
+
+<h3>1.1 문제 정의</h3>
+<p>분자 하나(SMILES 문자열)가 입력, 그 분자의 녹는점 mp [K]가 출력인 <b>지도학습 회귀(regression)</b> 문제다. 분류가 아니라 회귀인 이유는 목표값이 연속적인 실수(68–790 K)이기 때문이다. 모델은 SMILES 글자를 직접 읽지 못하므로 분자를 먼저 숫자로 바꾼다 — 이것이 "임베딩(표현)"이고, 어떤 표현을 쓰느냐가 어떤 모델을 쓸 수 있느냐를 정한다 <span class="badge ppt">15쪽</span>.</p>
+
+<table>
+<tr><th style="width:22%">기호</th><th>뜻</th><th style="width:34%">이번 과제의 shape·값</th></tr>
+<tr><td>m</td><td>학습 표본 수</td><td>train 4,000 (노트북 80/20) / 4,000 (train.py 80/10/10)</td></tr>
+<tr><td>X ∈ ℝ<sup>m×d</sup></td><td>설계 행렬(분자 m개 × 특징 d개)</td><td>기술자 d = 217 (실수), Morgan 지문 d = 2048 (0/1), 그래프는 분자마다 크기가 다른 (x, edge_index, edge_attr)</td></tr>
+<tr><td>y ∈ ℝ<sup>m</sup></td><td>목표값 mp [K]</td><td>표본 5,000: 80–790 K, 평균 377.4, 표준편차 92.3</td></tr>
+<tr><td>ŷ = f(x; θ)</td><td>모델의 예측. θ = 학습으로 정해지는 파라미터</td><td>Ridge θ = (w, b) 218개 … GIN θ 147,009개</td></tr>
+<tr><td>하이퍼파라미터</td><td>학습 전에 사람이 정하는 값(λ, k, C, 나무 수, 층 수 …)</td><td>노트북 <code>get_models()</code>의 값 그대로, 튜닝 없음 <span class="badge ppt">37쪽</span></td></tr>
+</table>
+
+<h3>1.2 전체 흐름 <span class="badge ppt">11쪽</span></h3>
+<table>
+<tr><th>단계</th><th>이번 과제에서 한 일</th><th>이 노트의 관련 절</th></tr>
+<tr><td>데이터</td><td>Bradley Open MP 19,945 → 수업용 표본 5,000 (seed 42)</td><td>1.1</td></tr>
+<tr><td>정제</td><td>DB 단계에서 중복 8,031 중앙값 병합·무효 0; 노트북에서는 확인만(무효 0, 중복 0)</td><td>—</td></tr>
+<tr><td>표현</td><td>(a) RDKit 기술자 217 (b) Morgan r=2 2048비트 (c) 분자 그래프 원자 147·결합 16</td><td>11</td></tr>
+<tr><td>분할</td><td>random 80/20 vs scaffold 80/20 (train.py는 80/10/10)</td><td>1.4</td></tr>
+<tr><td>모델</td><td>Ridge, kNN, SVR, RF, XGBoost, MLP × 표현 2종 + GIN(그래프)</td><td>3–9</td></tr>
+<tr><td>손실·최적화</td><td>모두 (변형된) 제곱 오차를 줄이는 방향. 닫힌 해 / 탐욕적 분할 / 경사하강 등 방법은 모델마다 다름</td><td>각 모델 절 ③</td></tr>
+<tr><td>일반화</td><td>train vs test 차이, random vs scaffold 차이로 진단</td><td>1.4, 각 모델 절 ⑧</td></tr>
+<tr><td>평가</td><td>test MAE [K] (보고), RMSE, R², 기준선(train 평균) 대비</td><td>1.3</td></tr>
+</table>
+
+<h3>1.3 손실함수와 평가지표는 왜 다른가 <span class="badge ppt">9, 23쪽</span></h3>
+<div class="formula">
+MSE = (1/m) Σ<sub>i</sub> (y<sub>i</sub> − ŷ<sub>i</sub>)<sup>2</sup> &nbsp;&nbsp;[K<sup>2</sup>] &nbsp;&nbsp;— 학습(최적화)에 쓰는 손실<br>
+MAE = (1/m) Σ<sub>i</sub> |y<sub>i</sub> − ŷ<sub>i</sub>| &nbsp;&nbsp;[K] &nbsp;&nbsp;— 보고 지표. 단위가 물성 단위와 같아 "평균 몇 K 틀렸나"로 읽힌다<br>
+RMSE = √MSE &nbsp;&nbsp;[K] ≥ MAE. &nbsp;차이가 크면 크게 틀린 분자 몇 개가 있다는 뜻<br>
+R<sup>2</sup> = 1 − Σ(y<sub>i</sub> − ŷ<sub>i</sub>)<sup>2</sup> / Σ(y<sub>i</sub> − ȳ)<sup>2</sup> &nbsp;&nbsp;— 1이면 완벽, 0이면 평균으로 찍은 것과 같음, 음수면 평균보다 못함
+<span class="v">y<sub>i</sub>: 측정값, ŷ<sub>i</sub>: 예측값, ȳ: test 평균, m: test 분자 수</span>
+</div>
+<p><span class="badge add">추가</span> 학습에 MSE를 쓰는 이유: 제곱은 어디서나 미분이 매끈해 경사하강·닫힌 해가 쉽고, 통계적으로는 "오차가 정규분포를 따른다"는 가정 아래 최대우도 추정과 같다. 그러나 큰 오차에 벌점을 제곱으로 주므로 이상치(값 오류)에 민감하다 — mp처럼 끓는점·염 값이 섞인 데이터에서는 MSE로 학습한 모델이 이상치 쪽으로 끌릴 수 있다. 보고는 MAE로 하는 이유는 사람이 읽기 쉽고 이상치에 덜 휘둘리기 때문이다. 둘을 혼동하는 것이 흔한 실수다(손실 ≠ 지표).</p>
+
+<div class="box key">
+<h4>기준선(baseline) — "좋다/나쁘다"의 첫 기준 <span class="badge ppt">23쪽</span></h4>
+<p>train 평균 ȳ<sub>train</sub>으로 모든 test 분자를 예측했을 때의 MAE. 이번 과제: <b>random 72.5 K, scaffold 76.0 K</b> (train.py 분할: 75.2 K). 모델 MAE / 기준선 MAE가 1 미만이어야 "무언가를 배웠다"고 말할 수 있고, 1을 넘는 칸은 평균만도 못한 것이다 — 우리 24칸 중 4칸이 그랬다.</p>
+</div>
+
+<h3>1.4 분할과 일반화 <span class="badge ppt">10, 14쪽</span></h3>
+<p><b>random 80/20</b>은 무작위로 나눈다. 비슷한 분자(같은 Murcko 골격)가 train과 test 양쪽에 들어가므로 성능이 좋게 나온다 — 우리 표본에서 test 분자의 <b>79 %</b>는 같은 골격이 train에 있었다. <b>scaffold 80/20</b>은 희귀한 골격부터 test로 보내 test 분자 1,000개가 <b>전부 train에서 못 본 골격</b>이 되게 한다(겹침 0). 새 분자를 스크리닝하는 실제 상황에 가깝다. 따라서 "scaffold − random" 차이는 <b>새 골격으로 일반화하는 비용</b>이고, 이 차이가 큰 모델일수록 본 적 있는 뼈대를 외운 것에 가깝다.</p>
+<p><span class="badge add">추가</span> 일반화 오차는 편향(bias)·분산(variance)·잡음의 합으로 생각한다. 편향 = 모델이 너무 단순해 진짜 함수를 못 담는 데서 오는 오차(과소적합), 분산 = 데이터가 조금 달라지면 모델이 크게 달라지는 데서 오는 오차(과적합), 잡음 = 같은 입력에 다른 y가 나오는 데서 오는 오차로 어떤 모델도 못 줄인다. mp는 잡음 항이 크다(반복 측정 86종 ≥ 50 K). 그래서 "train 오차가 작고 test 오차가 크다"를 전부 과적합으로 읽으면 안 되고, 잡음 하한을 함께 생각해야 한다.</p>
+
+<h3>1.5 왜 어떤 모델은 StandardScaler가 필요하고 어떤 모델은 아닌가 <span class="badge ppt">16쪽</span></h3>
+<div class="formula">
+z<sub>ij</sub> = (x<sub>ij</sub> − μ<sub>j</sub>) / σ<sub>j</sub> &nbsp;&nbsp;(μ<sub>j</sub>, σ<sub>j</sub>는 <b>train</b>에서만 계산, test에는 같은 값을 적용 — 그렇지 않으면 누수)
+</div>
+<p>기술자는 MolWt(수백)·TPSA(수십)·FractionCSP3(0–1)처럼 값의 크기가 제각각이다. <b>거리·내적·기울기</b>로 작동하는 모델(kNN의 거리, SVR의 커널 ‖x−x'‖, Ridge의 벌점 ‖w‖², MLP의 경사하강)은 큰 값의 특징이 결과를 지배하므로 표준화가 필요하다. <b>트리</b>(RF, XGBoost)는 "x<sub>j</sub> &lt; t인가?"라는 질문만 하므로 단조 변환에 불변 — 스케일링이 필요 없다. 노트북은 Ridge·kNN·SVR·MLP를 <code>Pipeline(StandardScaler, 모델)</code>로 묶어 train에만 fit되게 했다. 단, 같은 Pipeline이 <b>0/1 지문에도 적용</b>되었는데, 이것이 지문 결과를 크게 바꾼다(11절).</p>
+
+<h3>1.6 "튜닝 없음"의 뜻 <span class="badge ppt">37, 49쪽</span></h3>
+<p>하이퍼파라미터를 바꿔 가며 test 점수를 보고 고르면 test가 더 이상 "처음 보는 데이터"가 아니다(누수). 이번 과제는 모든 모델을 노트북의 기본 설정으로 한 번씩만 돌려 <b>같은 조건의 공정한 기준선</b>을 만든다. 튜닝이 필요하면 train 안에서 교차검증(<code>cross_val_score</code>)으로 한다. 따라서 아래의 모든 수치는 "그 모델이 낼 수 있는 최고"가 아니라 "기본 설정에서의 출발점"이다 — 모델 간 차이가 수 K라면 튜닝으로 뒤집힐 수 있지만, 수십 K(예: Morgan + kNN)라면 설정이 아니라 모델·표현의 궁합 문제다.</p>
+
+<!-- ============================================================ 2. 왜 이 7개 -->
+<div class="pb"></div>
+<h2>2. 왜 이 7개 모델인가 — 선택의 논리와 mp에 대한 당위성</h2>
+
+<h3>2.1 강의의 논리: 단순한 모델부터 → 기준 점수 → 복잡한 모델이 그 점수를 넘는가 <span class="badge ppt">19쪽</span></h3>
+<p>모델 하나를 돌려 MAE 30 K를 얻어도 그것이 좋은지 알 수 없다. 기준선(평균)은 72 K, 가장 단순한 선형 모델은 35 K, 트리 앙상블은 30 K … 이렇게 <b>사다리</b>가 있어야 각 단계의 복잡도가 얼마를 벌어 주는지 읽힌다. 여섯 고전 모델은 이 사다리이고, GIN은 "구조를 직접 배우는 복잡한 모델이 사다리 꼭대기를 넘는가"를 묻는 질문이다. 2주차 이후의 모든 변경(readout, 층 수, 결합 특징, BGNN)은 이 표의 한 줄을 더하는 방식으로 평가된다.</p>
+
+<h3>2.2 표현과 모델의 궁합 <span class="badge ppt">15쪽</span></h3>
+<p>15쪽은 표현별로 맞는 모델을 짝지었다: 기술자(실수 ~217) → Ridge·RF·XGBoost·SVR / 지문(0·1 2048) → kNN·RF·XGBoost·MLP / 그래프 → GCN·GIN·BGIN. 노트북은 두 표현에 여섯 모델을 <b>모두</b> 돌려 이 짝이 실제로 맞는지 확인하게 했다. 그래서 24칸 표에는 "맞는 짝"과 "안 맞는 짝"이 함께 들어 있고, 안 맞는 칸(기준선 이하 4칸)이 오히려 많은 것을 가르쳐 준다.</p>
+
+<h3>2.3 <span class="badge add">추가</span> 귀납 편향(inductive bias)이 서로 다른 모델들을 고른 것</h3>
+<p>모든 모델은 "세상이 이렇게 생겼을 것"이라는 가정(귀납 편향)을 갖고 데이터의 빈틈을 메운다. 일곱 모델은 서로 다른 가정을 대표한다. 어떤 가정이 mp와 맞는지는 돌려 보기 전에는 모른다 — 그래서 가정이 다른 모델을 골고루 넣는 것이 올바른 실험 설계다.</p>
+<table>
+<tr><th style="width:17%">모델</th><th style="width:28%">가정(귀납 편향)</th><th>가설 공간의 모양</th><th style="width:22%">mp에서 그 가정이 뜻하는 것</th></tr>
+<tr><td>Ridge</td><td>y는 특징의 <b>가법적</b> 선형 결합</td><td>초평면 ŷ = wᵀx + b</td><td>"기여도의 합"(기 기여법 전통). mp는 가법성이 약한 물성</td></tr>
+<tr><td>kNN</td><td><b>비슷한 입력 → 비슷한 출력</b> (국소 평활)</td><td>이웃 평균으로 만든 조각별 함수</td><td>QSPR의 "유사 구조 → 유사 물성" 원리의 직접 시험</td></tr>
+<tr><td>SVR(RBF)</td><td>매끄러운 비선형 함수, 작은 오차는 무시</td><td>커널 함수들의 가중합</td><td>잡음 큰 y에 ε-둔감 손실이 개념적으로 맞음</td></tr>
+<tr><td>Random Forest</td><td><b>축 정렬 구간</b>으로 나눌 수 있는 규칙들의 평균</td><td>조각별 상수(계단) 함수의 평균</td><td>"TPSA가 크고 고리가 많으면 높다" 같은 규칙; 외삽 불가</td></tr>
+<tr><td>XGBoost</td><td>같은 계단 함수를 <b>오차를 줄이는 방향으로 순차</b> 쌓음</td><td>조각별 상수 함수의 합</td><td>특징 간 상호작용(H-공여체 × 고리)을 잘 잡음</td></tr>
+<tr><td>MLP</td><td>층을 쌓은 <b>합성 비선형</b> 함수</td><td>조각별 선형(ReLU) 함수</td><td>데이터가 많으면 무엇이든; 적으면 임의의 외삽</td></tr>
+<tr><td>GIN</td><td>물성은 <b>원자와 이웃의 관계</b>에서 나온다 (순열 불변)</td><td>메시지 전달 함수 + 풀링</td><td>사람이 정한 특징 없이 구조를 배움; 결정·3D 정보는 없음</td></tr>
+</table>
+
+<h3>2.4 mp라는 물성에 대한 당위성 — 돌리기 전에 알 수 있었던 것</h3>
+<ul>
+<li><b>데이터 규모</b>: 표본 5,000(전체 19,945). 수천 개의 표 형식 데이터에서는 트리 앙상블이 강하고, 신경망·GNN은 "1만 개 이상"에서 유리하다 <span class="badge ppt">19쪽</span>. → XGBoost·RF가 유력, GIN은 경계 아래라는 가설이 선다.</li>
+<li><b>잡음 하한</b>: 반복 측정 86종 ≥ 50 K. 어떤 모델도 넘지 못하는 하한이 있으므로, 모델 간 비교는 "하한 근처에서 누가 먼저 멈추나"가 된다. 가운데 영역(300–450 K)에서 세 모델이 27–32 K로 비슷했던 것이 그 증거다.</li>
+<li><b>물성의 성격</b> <span class="badge add">추가</span>: 녹는점은 분자 하나가 아니라 <b>결정(고체)의 성질</b>이다. 격자 에너지(극성·수소결합·분산력)와 녹을 때의 엔트로피 증가(유연성·대칭성)가 결정한다. 2D 기술자는 극성·수소결합·강직성의 대리변수(TPSA, H-공여체 수, 고리 수, 회전 가능 결합 수)를 갖고 있어 이 물성에 비교적 잘 맞고, 지문은 부분구조의 유무만 담아 "전체 분자의 극성·크기" 요약에는 약하다. 그래프 신경망은 구조를 직접 배우지만 결정 패킹·대칭성은 역시 입력에 없다.</li>
+<li><b>해석의 필요</b> <span class="badge ppt">31쪽</span>: 공정 스크리닝은 정확도가 먼저지만, 틀린 예측을 찾고 데이터 오류를 걸러내려면 설명이 필요하다. 계수(Ridge)·중요도(RF)·SHAP(XGBoost)이 있는 모델을 포함해야 하는 이유.</li>
+</ul>
+
+<!-- ============================================================ 3. Ridge -->
+<div class="pb"></div>
+<h2>3. Ridge 회귀 — 특징의 가중합, L2로 계수 억제</h2>
+
+<h3>① 한 줄 직관 <span class="badge ppt">19쪽</span></h3>
+<p>각 기술자에 가중치를 곱해 더한 값으로 mp를 맞춘다. 가장 단순한 기준선이며, 가중치가 너무 커지지 않도록 벌점(L2)을 준다.</p>
+
+<h3>② 가정과 가설 함수</h3>
+<div class="formula">
+ŷ = w<sup>T</sup>x + b = Σ<sub>j=1..d</sub> w<sub>j</sub> x<sub>j</sub> + b
+<span class="v">x ∈ ℝ<sup>d</sup> (표준화된 기술자 217개 또는 지문 2048비트), w ∈ ℝ<sup>d</sup> 가중치, b 절편. 파라미터 수 = d + 1 (기술자 218개, 지문 2,049개)</span>
+</div>
+<p>가정: (i) mp는 특징들의 <b>가법적</b> 함수다 — 고리 하나가 올리는 양은 다른 특징과 무관하게 일정하다. (ii) 특징 간 상호작용과 곡선 관계는 없다(있으면 사람이 x²나 x<sub>1</sub>x<sub>2</sub> 같은 특징을 미리 만들어 넣어야 한다). <span class="badge add">추가</span> 통계적으로는 잔차가 평균 0·등분산의 정규분포라는 가정 아래 MSE 최소화가 최대우도 추정이 된다.</p>
+
+<h3>③ 손실함수와 학습 과정</h3>
+<div class="formula">
+J(w, b) = Σ<sub>i</sub> (y<sub>i</sub> − w<sup>T</sup>x<sub>i</sub> − b)<sup>2</sup> + λ ‖w‖<sup>2</sup><sub>2</sub> &nbsp;&nbsp;(λ = alpha, 절편 b는 벌하지 않음)<br>
+∂J/∂w = 0 &nbsp;⇒&nbsp; <b>w* = (X<sup>T</sup>X + λI)<sup>−1</sup> X<sup>T</sup>y</b> &nbsp;&nbsp;(닫힌 해, normal equation의 정규화판)
+<span class="v">X ∈ ℝ<sup>m×d</sup> (열 평균 0으로 중심화), X<sup>T</sup>X ∈ ℝ<sup>d×d</sup>, I ∈ ℝ<sup>d×d</sup>. λI를 더하면 X<sup>T</sup>X가 특이(상관 큰 열, d &gt; m)여도 역행렬이 존재한다</span>
+</div>
+<p>학습 과정: (1) StandardScaler로 열마다 평균 0·분산 1 (train 통계) → (2) X<sup>T</sup>X + λI (217×217 또는 2048×2048)를 만들고 → (3) 선형방정식을 Cholesky 분해로 한 번에 푼다. 반복(epoch)이 없다. 그래서 0.04 s(기술자)·0.6 s(지문)에 끝났다. <span class="badge add">추가</span> 비용은 O(m d² + d³)로, d = 2048이면 d³ 항이 지배해 기술자보다 15배 느려진 것이 그 때문이다.</p>
+
+<div class="box">
+<h4>손계산 예 <span class="badge add">추가</span> — λ가 계수를 "줄이는" 방식</h4>
+<p>특징 하나, 중심화된 데이터에서 w* = Σx<sub>i</sub>y<sub>i</sub> / (Σx<sub>i</sub>² + λ). Σx<sub>i</sub>y<sub>i</sub> = 50, Σx<sub>i</sub>² = 10이면 λ = 0 → w = 5.0, λ = 1 → w = 4.55, λ = 10 → w = 2.5. 벌점이 커질수록 계수가 0 쪽으로 눌린다(shrinkage). 표준화 후 Σx<sub>i</sub>² ≈ m = 4,000이므로 λ = 1은 분모를 0.025 %만 키운다 — <b>이번 설정에서 정규화는 거의 작동하지 않았다.</b> 그래서 지문(d = 2,048, 희소)에서 분산을 못 눌러 scaffold 96 K가 나온 것으로 해석할 수 있다.</p>
+</div>
+
+<h3>④ 하이퍼파라미터 λ(alpha)의 영향</h3>
+<table>
+<tr><th>λ</th><th>계수 크기</th><th>편향 / 분산</th><th>거동</th></tr>
+<tr><td>0</td><td>최소제곱 해 그대로</td><td>편향 최소 / 분산 최대</td><td>상관 큰 기술자 쌍(TPSA–NHOHCount)에 부호 반대의 큰 계수가 붙어 불안정 <span class="badge ppt">16쪽</span></td></tr>
+<tr><td>↑</td><td>0 쪽으로 수축(0이 되지는 않음)</td><td>편향 ↑ / 분산 ↓</td><td>과적합 완화, 너무 크면 과소적합(모든 예측이 평균 쪽)</td></tr>
+<tr><td>→ ∞</td><td>w → 0</td><td>—</td><td>ŷ → b = ȳ (기준선과 같아짐)</td></tr>
+</table>
+<p><span class="badge add">추가</span> L1(Lasso)은 계수를 정확히 0으로 만들어 특징 선택을 하지만, L2는 모든 계수를 조금씩 줄인다. 상관이 큰 기술자 묶음에서는 L2가 기여를 묶음 전체에 나눠 주어 더 안정적이다.</p>
+
+<h3>⑤ 노트북의 실제 설정</h3>
+<div class="code">'Ridge': make_pipeline(StandardScaler(), Ridge(alpha=1.0))
+# alpha=1.0, fit_intercept=True(기본), solver='auto' → 밀집 X·m &gt; d 이면 cholesky</div>
+
+<h3>⑥ 장점과 단점</h3>
+<div class="two">
+<div class="pros"><h4>장점</h4><ul>
+<li>닫힌 해, 수 초 이내, 하이퍼파라미터 1개 — 가장 싼 기준선</li>
+<li>볼록(convex) 문제라 전역 최적해 보장, 결과가 재현됨</li>
+<li>계수 w<sub>j</sub>의 부호·크기로 "어느 기술자가 mp를 올리나"를 바로 읽음(표준화했으므로 크기 비교 가능)</li>
+<li>학습 범위 밖에서 추세를 유지 <span class="badge ppt">20쪽</span> — 큰 분자로 외삽할 때 트리처럼 평평해지지 않음</li>
+</ul></div>
+<div class="cons"><h4>단점</h4><ul>
+<li>가법성·선형성 가정: 상호작용·포화·임계 거동을 못 담음</li>
+<li>상관 큰 특징에서 계수 해석이 흔들림(λ로 완화) <span class="badge ppt">16쪽</span></li>
+<li>희소 0/1 지문 + 표준화 + 작은 λ → 희귀 비트에 큰 계수 → 새 골격에서 무너짐(우리 scaffold 96.2 K)</li>
+<li>이상치(값 오류)에 MSE가 민감</li>
+</ul></div>
+</div>
+
+<h3>⑦ mp에서의 정합성·당위성</h3>
+<p><b>왜 넣어야 했나.</b> 첫째, 회귀 문제의 가장 단순한 가설이므로 "복잡한 모델이 벌어 주는 양"을 재는 자(尺)다. XGBoost 30.0 K와 Ridge 35.4 K의 차이 5.4 K가 바로 "비선형·상호작용이 mp에 기여하는 크기"다. 둘째, <span class="badge add">추가</span> 물성 예측의 전통인 <b>기 기여법(group contribution)</b>이 사실상 선형 가법 모델이다 — 분자를 작용기로 쪼개 기여를 더한다. Ridge는 그 전통을 기술자 공간에서 재현한 것이고, 이 모델이 기준선의 절반(35 K)까지 내려간다는 것은 mp의 상당 부분이 "크기·극성·수소결합의 가법적 합"으로 설명된다는 뜻이다. 셋째, 계수 해석으로 모델이 화학적으로 말이 되는 것을 배우는지 확인할 수 있다 <span class="badge ppt">31쪽</span>.</p>
+<p><b>맞지 않는 점.</b> 녹는점은 가법성이 약한 대표적 물성이다 <span class="badge add">추가</span>: 같은 작용기라도 대칭적으로 배치되면 패킹이 좋아져 mp가 크게 오르고(쿼터페닐), 유연한 사슬이 끼면 내려간다. 이런 "배치 의존"은 가법 모델 밖에 있다. 그래서 Ridge는 출발점이지 종착점일 수 없다.</p>
+
+<h3>⑧ 우리 결과</h3>
+<div class="box result">
+<p><b>기술자</b>: random <b>35.4 K</b> (R² 0.74) / scaffold <b>45.1 K</b> (R² 0.37) — 기준선의 49 % / 59 %. 6모델 중 4위. 기대(“조금 나은 정도”)보다 좋았다.<br>
+<b>Morgan 지문</b>: random <b>61.0 K</b> (R² 0.23) / scaffold <b class="bad">96.2 K ✗</b> (R² −1.81, 기준선 76.0보다 나쁨). random→scaffold +35 K.<br>
+해석: 기술자에서는 "크기·극성의 가법적 합"이 꽤 맞지만, 지문에서는 표준화된 희귀 비트 2,048개 위에 사실상 정규화 없는 최소제곱을 한 꼴이 되어 본 골격을 외우고 새 골격에서 무너졌다(11절). 24쪽의 logP 예(Ridge + Morgan scaffold가 기준선보다 나쁨)와 같은 모양이다.</p>
+</div>
+
+<h3>⑨ 흔한 실수·자가진단</h3>
+<ul>
+<li>표준화를 test에 다시 fit하거나(누수), 절편에도 벌점을 주는 실수. 노트북은 Pipeline으로 둘 다 피했다.</li>
+<li>"Ridge는 선형이라 약하다"로 끝내지 말 것 — 기술자 Ridge가 지문 XGBoost(39.5)보다 좋았다. 모델보다 표현이 먼저다.</li>
+</ul>
+<div class="q"><h4>자가진단</h4><ol>
+<li>w* = (XᵀX + λI)⁻¹Xᵀy에서 각 행렬의 shape를 d = 217, m = 4,000으로 써 보라. λI가 없을 때 역행렬이 존재하지 않을 수 있는 두 가지 상황은?</li>
+<li>λ를 2배로 하면 계수·편향·분산·train MAE·test MAE는 각각 어느 방향으로 움직이는가?</li>
+<li>지문 + Ridge가 scaffold에서 기준선보다 나빠진 이유를 "표준화 · 희귀 비트 · λ = 1"의 세 단어로 설명하라.</li>
+</ol></div>
+
+<!-- ============================================================ 4. kNN -->
+<div class="pb"></div>
+<h2>4. kNN 회귀 — 가장 비슷한 분자 k개의 평균</h2>
+
+<h3>① 한 줄 직관 <span class="badge ppt">19쪽</span></h3>
+<p>새 분자가 오면 train에서 가장 가까운 분자 k개를 찾아 그들의 mp를 (거리 가중) 평균한다. "비슷한 구조는 비슷한 물성"이라는 QSPR의 원리를 그대로 모델로 만든 것.</p>
+
+<h3>② 가정과 가설 함수</h3>
+<div class="formula">
+ŷ(x) = Σ<sub>i∈N<sub>k</sub>(x)</sub> w<sub>i</sub> y<sub>i</sub> / Σ<sub>i∈N<sub>k</sub>(x)</sub> w<sub>i</sub>, &nbsp;&nbsp; w<sub>i</sub> = 1 / d(x, x<sub>i</sub>) &nbsp;(weights='distance')<br>
+d(x, x') = ‖x − x'‖<sub>2</sub> = √Σ<sub>j</sub>(x<sub>j</sub> − x'<sub>j</sub>)<sup>2</sup> &nbsp;&nbsp;(유클리드; 표준화된 특징 공간)
+<span class="v">N<sub>k</sub>(x): x에 가장 가까운 train 분자 k개의 집합. k = 5. 파라미터는 "train 데이터 자체"(비모수, 메모리 기반)</span>
+</div>
+<p>가정: (i) 특징 공간에서 가까우면 y도 가깝다(국소 평활성). (ii) <b>거리 함수가 "화학적 비슷함"을 제대로 잰다</b> — 이것이 kNN의 전부이자 약점이다. 거리가 틀리면 아무리 k를 바꿔도 소용없다.</p>
+
+<h3>③ 손실함수와 학습 과정</h3>
+<p>명시적 손실 최소화가 없다. <b>학습 = train 데이터를 저장</b>(0.06 s), <b>예측 = 거리 계산</b>. 예측 비용은 분자당 O(m·d)로, 데이터가 커질수록 예측이 느려지는 유일한 모델이다. <span class="badge add">추가</span> 통계적으로는 k가 커질수록 평균을 많이 취해 분산이 줄고 편향이 늘며(k = m이면 기준선), k = 1이면 train 오차 0·분산 최대다. 거리 가중은 가까운 이웃에 더 큰 발언권을 주어 k가 커도 국소성을 유지하게 한다.</p>
+
+<div class="box">
+<h4>손계산 예 <span class="badge add">추가</span></h4>
+<p>이웃 3개의 (거리, mp) = (1, 380), (2, 420), (4, 300). 가중치 1/d = 1, 0.5, 0.25 → ŷ = (380·1 + 420·0.5 + 300·0.25) / 1.75 = (380 + 210 + 75) / 1.75 = <b>380 K</b>. 단순 평균이면 366.7 K. 가까운 이웃(380)이 결과를 끌어당긴다.</p>
+</div>
+
+<h3>④ 하이퍼파라미터의 영향</h3>
+<table>
+<tr><th>k ↑</th><th>경계가 매끄러워짐, 분산 ↓ 편향 ↑; k = m이면 기준선</th></tr>
+<tr><th>weights</th><th>'uniform' = 단순 평균 / 'distance' = 가까운 이웃 우대(거리 0이면 그 이웃만)</th></tr>
+<tr><th>거리 함수</th><th>유클리드(연속 특징용) vs Tanimoto(0/1 지문용) <span class="badge ppt">17쪽</span>. 노트북은 두 표현 모두 표준화 유클리드 — 지문에는 맞지 않는 선택이었다(⑧)</th></tr>
+<tr><th>특징 스케일</th><th>표준화 안 하면 MolWt가 거리를 독점; 표준화하면(연속 특징) 공평해지지만, 0/1 비트에서는 희귀 비트가 거리를 독점(11절)</th></tr>
+</table>
+
+<h3>⑤ 노트북의 실제 설정</h3>
+<div class="code">'kNN': make_pipeline(StandardScaler(), KNeighborsRegressor(n_neighbors=5, weights='distance'))
+# metric='minkowski', p=2 (유클리드). 지문에도 같은 Pipeline → 0/1 비트가 표준화됨</div>
+
+<h3>⑥ 장점과 단점</h3>
+<div class="two">
+<div class="pros"><h4>장점</h4><ul>
+<li>가정이 거의 없음(비모수) — 함수 모양을 몰라도 됨</li>
+<li>학습이 즉시, 새 데이터 추가가 쉬움(저장만)</li>
+<li>예측 근거가 "이 이웃 5개"로 보여서 설명이 직관적</li>
+<li>데이터가 조밀한 영역(300–450 K)에서는 강함</li>
+</ul></div>
+<div class="cons"><h4>단점</h4><ul>
+<li>거리 함수·스케일에 전적으로 의존; 고차원(2048)에서 거리가 무의미해짐(차원의 저주)</li>
+<li>외삽 불가: 학습 범위 밖에서 평평 <span class="badge ppt">20쪽</span></li>
+<li>새 골격(scaffold)에서는 "가까운 이웃"이 사실상 없음 → 우리 +13 K(기술자), +40 K(지문)</li>
+<li>예측 비용 O(m·d), 메모리 = 데이터 전체</li>
+</ul></div>
+</div>
+
+<h3>⑦ mp에서의 정합성·당위성</h3>
+<p><b>왜 넣어야 했나.</b> 화학자가 머릿속으로 하는 추정("이 분자는 저 분자와 비슷하니 mp도 비슷하겠지")을 그대로 수식으로 옮긴 모델이므로, <b>유사 구조 원리가 mp에 얼마나 통하는지</b>를 재는 실험이다. 또 가장 "외우는" 모델이라 random vs scaffold 차이가 "본 골격을 외운 효과"의 상한을 보여 준다 <span class="badge ppt">14쪽</span>.</p>
+<p><b>맞지 않는 점.</b> mp는 작은 구조 변화(메틸기 위치, 대칭성)에 수십 K씩 뛰는 물성이라 "가까우면 비슷하다"는 가정이 자주 깨진다(activity cliff의 물성판). 그리고 노트북의 거리(표준화 유클리드)는 지문에 맞지 않았다 — 지문의 올바른 거리는 Tanimoto다 <span class="badge ppt">17쪽</span>.</p>
+
+<h3>⑧ 우리 결과</h3>
+<div class="box result">
+<p><b>기술자</b>: random <b>38.5 K</b> (6위) / scaffold <b>51.7 K</b> — 기대대로 "비슷한 분자가 많은 영역 강함, 새 골격 약함"(+13 K).<br>
+<b>Morgan 지문</b>: random <b class="bad">86.2 K ✗</b> / scaffold <b class="bad">125.9 K ✗</b> — random에서도 기준선(72.5)보다 나쁜 유일한 칸.</p>
+<p><span class="badge add">추가 검증</span> 왜 이렇게 무너졌는지 직접 재 봤다(표본 5,000, random 분할, test 300개). 표준화된 지문에서 두 분자 사이 제곱 거리의 <b>76 %</b>가 빈도 1 % 미만의 희귀 비트에서 나왔다. 그 결과 test 분자(무거운 원자 평균 16.1개)의 "가장 가까운 이웃 5개"는 평균 <b>10.3개</b>짜리 훨씬 작은 분자들이었다 — 희귀 비트가 적은 분자가 모든 분자의 이웃이 된다. 같은 300개를 Tanimoto 유사도로 이웃을 고르면(단순 평균) MAE <b>49.8 K</b>, 표준화 유클리드는 <b>92.4 K</b>(기준선 73.6). 즉 kNN이 틀린 것이 아니라 <b>거리가 틀렸다</b>.</p>
+</div>
+
+<h3>⑨ 흔한 실수·자가진단</h3>
+<ul>
+<li>kNN의 k(이웃 수)와 K-means의 K(군집 수)를 혼동. kNN은 지도학습 회귀/분류, K-means는 비지도 군집.</li>
+<li>"지문에는 어떤 거리든 되겠지" — 0/1 벡터에 표준화 + 유클리드를 쓰면 희귀 비트가 거리를 독점한다.</li>
+</ul>
+<div class="q"><h4>자가진단</h4><ol>
+<li>k를 1 → 5 → 50으로 늘리면 train MAE와 test MAE는 어떻게 변하는가? k = 4,000이면?</li>
+<li>표준화된 0/1 비트 j에서, 한 분자에만 그 비트가 켜져 있을 때 제곱 거리 기여는 1/(p<sub>j</sub>(1−p<sub>j</sub>))이다. p<sub>j</sub> = 0.5와 0.001의 기여를 비교하라.</li>
+<li>Tanimoto 유사도 |A∩B| / |A∪B|가 유클리드 거리와 달리 "둘 다 0인 비트"를 무시하는 이유는 무엇이고, 그것이 왜 지문에 맞는가?</li>
+</ol></div>
+
+<!-- ============================================================ 5. SVR -->
+<div class="pb"></div>
+<h2>5. SVR — 커널로 비선형, ε 밖의 오차만 벌점</h2>
+
+<h3>① 한 줄 직관 <span class="badge ppt">19쪽</span></h3>
+<p>예측값 주변에 폭 ε의 "튜브"를 두고, 튜브 안에 들어온 점은 오차로 치지 않는다. 튜브 밖의 점(서포트 벡터)만이 모델을 결정하며, 커널(RBF)로 비선형 관계를 잡는다.</p>
+
+<h3>② 가정과 가설 함수</h3>
+<div class="formula">
+ŷ(x) = Σ<sub>i∈SV</sub> (α<sub>i</sub> − α<sub>i</sub>*) K(x<sub>i</sub>, x) + b, &nbsp;&nbsp; K(x, x') = exp(−γ ‖x − x'‖<sup>2</sup>) &nbsp;(RBF)
+<span class="v">SV = 서포트 벡터(튜브 밖 또는 경계의 train 분자), α<sub>i</sub>, α<sub>i</sub>* ∈ [0, C] 쌍대 변수, γ = 1/(d · Var(X)) ('scale'; 표준화 후 ≈ 1/d = 1/217 또는 1/2048)</span>
+</div>
+<p>가정: y는 입력 공간에서 매끄럽게 변하는 함수(RBF 커널 = "가까운 점끼리 비슷하다"를 거리의 가우시안으로 표현). <span class="badge add">추가</span> 커널 트릭: 특징을 무한차원 공간으로 보내 선형 회귀를 하는 것과 같지만, 내적 K(x, x')만 계산하면 되어 그 공간을 실제로 만들 필요가 없다.</p>
+
+<h3>③ 손실함수와 학습 과정</h3>
+<div class="formula">
+min<sub>w,b,ξ</sub> &nbsp; ½‖w‖<sup>2</sup> + C Σ<sub>i</sub> (ξ<sub>i</sub> + ξ<sub>i</sub>*) &nbsp;&nbsp; s.t. &nbsp;|y<sub>i</sub> − ŷ<sub>i</sub>| ≤ ε + ξ<sub>i</sub>(또는 ξ<sub>i</sub>*), ξ ≥ 0<br>
+ε-둔감 손실: &nbsp;L<sub>ε</sub>(r) = max(0, |r| − ε) &nbsp;&nbsp;(r = 잔차; |r| ≤ ε이면 0)
+<span class="v">C: 튜브 밖 오차의 벌점 세기(크면 train에 맞추려 함), ε: 튜브 반폭 [K], ξ: 튜브를 벗어난 양(slack)</span>
+</div>
+<p>학습 과정: (1) 표준화 → (2) 위 문제의 <b>쌍대(dual) 이차계획법</b>을 libsvm의 SMO 알고리즘으로 푼다(α 두 개씩 골라 갱신) → (3) α ≠ 0인 점만 저장(서포트 벡터). <span class="badge add">추가</span> 커널 행렬이 m×m(4,000×4,000)이라 비용이 O(m²)–O(m³)로 자라며, 전체 19,945개면 노트북 설명대로 느려진다. 볼록 문제이므로 전역 최적해가 보장된다.</p>
+
+<h3>④ 하이퍼파라미터의 영향</h3>
+<table>
+<tr><th style="width:14%">C ↑</th><td>오차 벌점 ↑ → 튜브 밖 점을 더 맞추려 함 → 복잡·과적합 쪽 (C ↓: 평평·과소적합)</td></tr>
+<tr><th>ε ↑</th><td>튜브가 넓어져 서포트 벡터 ↓, 모델 단순·둔감 (잡음 수준에 맞추는 것이 이상). ε = 0.1 K는 mp 잡음(수십 K)에 비해 매우 작아 거의 모든 점이 서포트 벡터가 됨</td></tr>
+<tr><th>γ ↑</th><td>커널이 좁아짐 → 각 점 주변만 영향 → 과적합(γ ↓: 넓고 평평). 'scale'은 특징 수로 정규화</td></tr>
+</table>
+
+<h3>⑤ 노트북의 실제 설정</h3>
+<div class="code">'SVR': make_pipeline(StandardScaler(), SVR(C=10, epsilon=0.1))
+# kernel='rbf', gamma='scale' = 1/(n_features·Var(X)) ≈ 1/d, epsilon 단위 = y 단위(K)</div>
+
+<h3>⑥ 장점과 단점</h3>
+<div class="two">
+<div class="pros"><h4>장점</h4><ul>
+<li>비선형을 커널 하나로, 볼록 최적화로 전역해</li>
+<li>ε-둔감 손실은 작은 잡음을 무시 → 잡음 큰 y에 개념적으로 적합</li>
+<li>고차원에서도 안정(‖w‖² 정규화 내장)</li>
+<li>수천 개 규모에서는 빠름(기술자 2.2 s)</li>
+</ul></div>
+<div class="cons"><h4>단점</h4><ul>
+<li>O(m²)~O(m³): 수만 개부터 느려짐(지문 14 s, 전체 데이터면 분 단위)</li>
+<li>C, ε, γ 세 개가 결과를 크게 좌우 — 튜닝 없이는 잠재력을 못 봄</li>
+<li>해석 불가(어느 특징이 왜인지 안 보임)</li>
+<li>데이터에서 멀어지면 K → 0 → 예측이 b(상수)로 수렴 <span class="badge add">추가</span> (20쪽은 "임의"로 분류)</li>
+</ul></div>
+</div>
+
+<h3>⑦ mp에서의 정합성·당위성</h3>
+<p><b>왜 넣어야 했나.</b> 선형(Ridge)과 트리 사이의 "매끄러운 비선형" 가설을 대표한다. 또 ε-둔감 손실은 <b>측정 잡음이 큰 물성</b>에 이론적으로 가장 잘 맞는 손실이다 — 잡음 폭 안의 오차는 맞추려 들지 않는 것이 옳기 때문이다. 데이터가 수천 개인 지금은 비용도 감당된다.</p>
+<p><b>맞지 않는 점.</b> ε = 0.1 K는 mp 잡음(수십 K)에 비해 사실상 0이어서 그 장점이 발휘되지 않았다(튜닝 없음 규칙 때문에 그대로 둠). 지문에서는 표준화된 희소 비트 때문에 거의 모든 쌍의 거리가 멀어 K ≈ 0, 예측이 상수 쪽으로 눌린다 — random과 scaffold가 54.8 / 55.5 K로 <b>같이 나쁜</b>(둘 다 평평한) 이유다.</p>
+
+<h3>⑧ 우리 결과</h3>
+<div class="box result">
+<p><b>기술자</b>: random <b>35.4 K</b> (R² 0.70; Ridge와 같은 MAE지만 RMSE 50.2로 더 큼 → 큰 오차 몇 개) / scaffold <b>44.0 K</b> (R² 0.38). 3위권.<br>
+<b>Morgan</b>: random <b>54.8</b> / scaffold <b>55.5 K</b> — 12쌍 중 유일하게 random ≈ scaffold(+0.7 K). 외운 것도 없고 배운 것도 적은 "평평한" 모델의 신호.</p>
+</div>
+
+<h3>⑨ 흔한 실수·자가진단</h3>
+<ul>
+<li>ε의 단위를 잊는 것 — y 단위(K)다. logP(단위 ~1)에서 0.1은 의미 있지만 mp(수백 K)에서 0.1은 0과 같다.</li>
+<li>SVR을 분류기 SVM과 섞어 "마진 최대화"로만 설명하는 것 — 회귀에서는 튜브 폭과 ‖w‖²의 trade-off다.</li>
+</ul>
+<div class="q"><h4>자가진단</h4><ol>
+<li>γ를 10배로 키우면 커널의 폭, 서포트 벡터 수, train/test 오차는 어떻게 변하는가?</li>
+<li>ε를 mp의 잡음 수준(예: 10 K)으로 올리면 어떤 점들이 서포트 벡터에서 빠지는가? 그것이 왜 바람직할 수 있는가?</li>
+<li>왜 SVR + Morgan은 random과 scaffold 점수가 거의 같았는가? 그 모델의 parity plot은 어떤 모양일지 그려 보라.</li>
+</ol></div>
+
+<!-- ============================================================ 6. RF -->
+<div class="pb"></div>
+<h2>6. Random Forest — 깊은 나무 여러 개의 평균(배깅)</h2>
+
+<h3>① 한 줄 직관 <span class="badge ppt">19쪽</span></h3>
+<p>데이터를 "TPSA &lt; 48인가?" 같은 질문으로 계속 쪼개 잎마다 평균 mp를 저장하는 결정 나무를, 서로 다른 부트스트랩 표본으로 300그루 키워 평균한다. 나무 하나는 과적합하지만 평균은 안정적이다.</p>
+
+<h3>② 가정과 가설 함수</h3>
+<div class="formula">
+나무 하나: &nbsp;T(x) = Σ<sub>잎 ℓ</sub> c<sub>ℓ</sub> · 𝟙[x ∈ R<sub>ℓ</sub>], &nbsp; c<sub>ℓ</sub> = 잎 ℓ에 속한 train 분자의 mp 평균<br>
+숲: &nbsp;ŷ(x) = (1/B) Σ<sub>b=1..B</sub> T<sub>b</sub>(x), &nbsp; B = 300
+<span class="v">R<sub>ℓ</sub>: 축에 평행한 직사각형 영역(x<sub>j</sub> &lt; t 질문들의 교집합). 함수는 조각별 상수(계단)이며, 학습 범위 밖에서는 가장자리 잎의 값으로 평평하다</span>
+</div>
+<p>가정: y는 특징 축에 평행한 경계로 나뉘는 영역별 상수로 근사할 수 있다. 특징의 단위·스케일·단조 변환에 무관하다(분할 질문만 하므로).</p>
+
+<h3>③ 손실함수와 학습 과정</h3>
+<div class="formula">
+분할 기준(회귀): &nbsp;영역 R을 (x<sub>j</sub> &lt; t)로 둘로 나눌 때 &nbsp;Σ<sub>i∈R<sub>left</sub></sub>(y<sub>i</sub> − ȳ<sub>left</sub>)<sup>2</sup> + Σ<sub>i∈R<sub>right</sub></sub>(y<sub>i</sub> − ȳ<sub>right</sub>)<sup>2</sup> 가 최소가 되는 (j, t)를 고른다 (= MSE 감소 최대)
+</div>
+<p>학습 과정(나무 b마다): (1) train 4,000개에서 <b>복원 추출</b>로 4,000개 뽑기(부트스트랩; 약 63 %가 고유, 나머지는 OOB) → (2) 뿌리에서 모든 특징·모든 분할점을 훑어 MSE 감소가 최대인 질문 선택 → (3) 잎에 분자 1개가 남을 때까지(min_samples_leaf=1) 재귀 → (4) 300그루 독립 학습(병렬) → 예측은 평균. <span class="badge add">추가</span> 회귀 숲의 sklearn 기본은 max_features=1.0(모든 특징 고려)이므로 이번 모델은 "순수 배깅"이고, 나무 간 상관을 더 낮추려면 max_features를 줄이는 것이 보통이다. 비용 O(B · m log m · d) → 지문(d = 2048)에서 58 s로 가장 느린 모델이 되었다.</p>
+
+<div class="box">
+<h4>왜 평균하면 좋아지는가 <span class="badge add">추가</span></h4>
+<p>나무 B개의 예측이 각각 분산 σ², 서로 상관 ρ라면 평균의 분산은 ρσ² + (1−ρ)σ²/B. B를 키우면 두 번째 항은 0으로 가지만 첫 항 ρσ²는 남는다 — 그래서 부트스트랩(데이터를 다르게)과 특징 무작위화(질문을 다르게)로 ρ를 낮추는 것이 핵심이다. 편향은 깊은 나무라 낮고, 분산은 평균으로 낮춘다: 튜닝 없이도 안정적인 이유.</p>
+</div>
+
+<h3>④ 하이퍼파라미터의 영향</h3>
+<table>
+<tr><th style="width:22%">n_estimators ↑</th><td>분산 ↓(수렴), 시간 ∝ B. 300이면 충분히 수렴</td></tr>
+<tr><th>max_depth / min_samples_leaf</th><td>얕게·잎 크게 → 편향 ↑ 분산 ↓. 기본(제한 없음)은 과적합한 나무를 평균으로 보정하는 전략</td></tr>
+<tr><th>max_features ↓</th><td>나무 간 상관 ↓ → 평균의 분산 ↓, 단 너무 작으면 좋은 특징을 못 봄</td></tr>
+<tr><th>bootstrap</th><td>끄면 모든 나무가 같은 데이터 → 다양성 사라짐</td></tr>
+</table>
+
+<h3>⑤ 노트북의 실제 설정</h3>
+<div class="code">'RandomForest': RandomForestRegressor(n_estimators=300, n_jobs=-1, random_state=SEED)
+# max_features=1.0(회귀 기본, 모든 특징), max_depth=None, min_samples_leaf=1, bootstrap=True. 스케일러 없음</div>
+
+<h3>⑥ 장점과 단점</h3>
+<div class="two">
+<div class="pros"><h4>장점</h4><ul>
+<li>튜닝 없이 안정 — 기본값으로 2위(기술자 33.5 K)</li>
+<li>스케일링·단조 변환 불필요, 이상치에 비교적 둔감(잎 평균)</li>
+<li>비선형·상호작용을 자동으로 잡음</li>
+<li><code>feature_importances_</code>로 해석(우리: BertzCT, TPSA, NumHDonors, RingCount …)</li>
+<li>OOB 오차로 별도 검증 없이 일반화 추정 가능 <span class="badge add">추가</span></li>
+</ul></div>
+<div class="cons"><h4>단점</h4><ul>
+<li><b>외삽 불가</b>: 학습 범위 밖은 평평 <span class="badge ppt">20쪽</span> → 고융점 끝(&gt; 550 K)에서 과소 예측</li>
+<li>조각별 상수라 매끄러운 추세를 계단으로 근사 → 작은 데이터에서 거침</li>
+<li>나무 300그루 저장·예측 비용, 고차원 지문에서 학습 느림(58 s)</li>
+<li>불순도 기반 중요도는 상관 큰 특징 사이에서 나뉘고, 범주가 많은 특징을 과대평가 <span class="badge add">추가</span></li>
+</ul></div>
+</div>
+
+<h3>⑦ mp에서의 정합성·당위성</h3>
+<p><b>왜 넣어야 했나.</b> 기술자 217개는 전형적인 <b>표 형식(tabular) 데이터</b>이고, 수천 행의 표 데이터에서 트리 앙상블은 가장 신뢰할 수 있는 비선형 기준선이다 <span class="badge ppt">19쪽</span>. 스케일링·분포 가정이 없어 "모델을 잘못 설정해서 나쁜" 가능성이 가장 낮다 — 즉 <b>데이터 자체가 얼마나 예측 가능한지</b>를 재는 데 적합하다. 또 중요도로 모델이 보는 것을 확인할 수 있다(31쪽 설명 검증).</p>
+<p><b>맞지 않는 점.</b> mp 분포의 양 끝(&lt; 200 K, &gt; 550 K)은 데이터가 2–4 %뿐이고, 트리는 그 밖으로 외삽하지 못한다. Mirex(758 K)를 436 K로 예측한 것은 트리 모델의 구조적 한계다 — "가장 높은 잎의 평균" 이상을 낼 수 없다.</p>
+
+<h3>⑧ 우리 결과</h3>
+<div class="box result">
+<p><b>기술자</b>: random <b>33.5 K</b> (R² 0.76, 2위) / scaffold <b>40.7 K</b> (R² 0.49, 2위). 새 골격 비용 +7.2 K로 XGBoost와 함께 가장 작음.<br>
+<b>Morgan</b>: random <b>40.9</b> / scaffold <b>55.5 K</b> — 지문에서도 살아남은 두 모델 중 하나(트리는 비트를 "있다/없다"로만 보므로 표준화 문제를 피함).<br>
+중요도 상위(random): BertzCT 0.33, TPSA 0.10, NumHDonors 0.07, RingCount 0.06, NHOHCount 0.03 — SHAP 상위와 같은 집합.</p>
+</div>
+
+<h3>⑨ 흔한 실수·자가진단</h3>
+<ul>
+<li>"나무가 많을수록 과적합"이 아니다 — B를 키워도 분산만 줄 뿐 과적합이 늘지 않는다(부스팅과 다른 점).</li>
+<li>중요도를 인과로 읽는 것 — "BertzCT가 중요"는 "크기·복잡도와 상관된 무언가가 중요"다.</li>
+</ul>
+<div class="q"><h4>자가진단</h4><ol>
+<li>부트스트랩 표본에 한 분자가 한 번도 안 뽑힐 확률 (1 − 1/m)<sup>m</sup> ≈ e<sup>−1</sup> ≈ 0.37임을 설명하고, OOB 평가가 무엇인지 말하라.</li>
+<li>RF가 train에 없는 900 K짜리 분자를 받으면 예측은 무엇에 의해 결정되는가? Ridge라면?</li>
+<li>RF와 XGBoost 모두 "나무의 합"인데, 왜 하나는 분산을 줄이고 하나는 편향을 줄인다고 하는가?</li>
+</ol></div>
+
+<!-- ============================================================ 7. XGBoost -->
+<div class="pb"></div>
+<h2>7. XGBoost — 앞 나무의 오차를 다음 나무가 보정(그래디언트 부스팅)</h2>
+
+<h3>① 한 줄 직관 <span class="badge ppt">19쪽</span></h3>
+<p>처음엔 평균으로 예측하고, 그 잔차(틀린 양)를 작은 나무가 배우고, 그 나무의 예측을 학습률만큼만 더한다. 이것을 600번 반복해 오차를 조금씩 깎아 나간다.</p>
+
+<h3>② 가정과 가설 함수</h3>
+<div class="formula">
+ŷ<sub>i</sub> = Σ<sub>k=1..K</sub> η f<sub>k</sub>(x<sub>i</sub>), &nbsp;&nbsp; f<sub>k</sub> = 깊이 ≤ 6인 회귀 나무, &nbsp; η = 0.05, &nbsp; K = 600
+<span class="v">f<sub>k</sub>는 잎 값 w ∈ ℝ<sup>T</sup>(T = 잎 수 ≤ 2<sup>6</sup> = 64)를 가진 나무. 예측은 "작은 계단 함수 600개의 합"</span>
+</div>
+
+<h3>③ 손실함수와 학습 과정 <span class="badge add">추가</span>(XGBoost 원리)</h3>
+<div class="formula">
+목적함수: &nbsp;Obj = Σ<sub>i</sub> l(y<sub>i</sub>, ŷ<sub>i</sub>) + Σ<sub>k</sub> Ω(f<sub>k</sub>), &nbsp;&nbsp; Ω(f) = γT + ½ λ ‖w‖<sup>2</sup> &nbsp;(잎 수·잎 값 벌점; 기본 γ = 0, λ = 1)<br>
+k번째 나무를 더할 때 2차 테일러 전개: &nbsp;Obj<sup>(k)</sup> ≈ Σ<sub>i</sub> [ g<sub>i</sub> f<sub>k</sub>(x<sub>i</sub>) + ½ h<sub>i</sub> f<sub>k</sub>(x<sub>i</sub>)<sup>2</sup> ] + Ω(f<sub>k</sub>), &nbsp; g<sub>i</sub> = ∂l/∂ŷ, h<sub>i</sub> = ∂<sup>2</sup>l/∂ŷ<sup>2</sup><br>
+제곱 오차 l = ½(y − ŷ)<sup>2</sup>이면 &nbsp;g<sub>i</sub> = ŷ<sub>i</sub> − y<sub>i</sub> (= −잔차), h<sub>i</sub> = 1<br>
+잎 ℓ의 최적 값: &nbsp;<b>w<sub>ℓ</sub>* = −G<sub>ℓ</sub> / (H<sub>ℓ</sub> + λ)</b>, &nbsp; G<sub>ℓ</sub> = Σ<sub>i∈ℓ</sub> g<sub>i</sub>, H<sub>ℓ</sub> = Σ<sub>i∈ℓ</sub> h<sub>i</sub><br>
+분할 이득: &nbsp;Gain = ½ [ G<sub>L</sub><sup>2</sup>/(H<sub>L</sub>+λ) + G<sub>R</sub><sup>2</sup>/(H<sub>R</sub>+λ) − (G<sub>L</sub>+G<sub>R</sub>)<sup>2</sup>/(H<sub>L</sub>+H<sub>R</sub>+λ) ] − γ
+</div>
+<p>학습 과정: (1) ŷ<sup>(0)</sup> = train 평균 → (2) 각 분자의 g<sub>i</sub>, h<sub>i</sub> 계산 → (3) 행 80 %(subsample)·특징 50 %(colsample_bytree)를 뽑아 → (4) Gain이 최대인 분할로 깊이 6까지 나무를 만들고 잎 값 w* 설정 → (5) ŷ ← ŷ + η f<sub>k</sub> → (2)로. 600회. 제곱 오차에서는 "잔차의 잎 평균을 λ로 눌러서(w = −G/(n+1)) 5 %만 더한다"는 뜻이다. 분할점 탐색은 히스토그램(tree_method='hist')으로 특징값을 구간화해 빠르다 — 지문 2,048비트에서도 4.4 s로 가장 빠른 비선형 모델이었다.</p>
+
+<div class="box">
+<h4>손계산 예 <span class="badge add">추가</span></h4>
+<p>y = (300, 400, 500), 초기 ŷ<sup>(0)</sup> = 400. 잔차 r = (−100, 0, +100), g = −r = (100, 0, −100), h = 1. 한 잎에 {y=500}만 있으면 G = −100, H = 1, λ = 1 → w* = −(−100)/(1+1) = <b>+50</b>. 학습률 0.05를 곱해 그 분자의 예측은 400 + 2.5 = 402.5 K. 잔차 100 중 2.5만 깎았다 — 이래서 600그루가 필요하고, 그래서 과적합이 서서히 진행되어 조기 종료나 나무 수로 제어할 수 있다.</p>
+</div>
+
+<h3>④ 하이퍼파라미터의 영향</h3>
+<table>
+<tr><th style="width:24%">n_estimators ↑</th><td>train 오차 단조 감소, test는 어느 시점부터 과적합(RF와 다름). η와 반비례로 정함</td></tr>
+<tr><th>learning_rate η ↓</th><td>한 걸음이 작아져 더 많은 나무 필요, 일반적으로 일반화 ↑</td></tr>
+<tr><th>max_depth ↑</th><td>나무 하나가 더 복잡한 상호작용(깊이 6 = 특징 6개까지의 상호작용) → 과적합 위험 ↑</td></tr>
+<tr><th>subsample, colsample_bytree &lt; 1</th><td>확률적 부스팅: 나무 간 다양성 ↑, 분산 ↓, 학습 속도 ↑</td></tr>
+<tr><th>λ(reg_lambda), γ(gamma), min_child_weight</th><td>잎 값·잎 수·잎 최소 질량 벌점 → 정규화</td></tr>
+</table>
+
+<h3>⑤ 노트북의 실제 설정</h3>
+<div class="code">'XGBoost': XGBRegressor(n_estimators=600, learning_rate=0.05, max_depth=6,
+                        subsample=0.8, colsample_bytree=0.5, n_jobs=-1, random_state=SEED)
+# objective='reg:squarederror', reg_lambda=1, gamma=0, tree_method='hist'(기본). 스케일러 없음</div>
+
+<h3>⑥ 장점과 단점</h3>
+<div class="two">
+<div class="pros"><h4>장점</h4><ul>
+<li>표 형식 데이터에서 수천–수십만 규모의 사실상 표준(state of the art) <span class="badge add">추가</span></li>
+<li>편향을 순차적으로 줄여 RF보다 정확(우리 4열 모두 1위)</li>
+<li>정규화(λ, γ, 서브샘플링) 내장, 결측치 처리 내장</li>
+<li>히스토그램 분할로 빠름(4.8 s); SHAP TreeExplainer로 정확한 기여 분해 가능</li>
+</ul></div>
+<div class="cons"><h4>단점</h4><ul>
+<li>하이퍼파라미터가 많고 서로 얽힘(η × 나무 수 × 깊이)</li>
+<li>나무 수를 늘리면 과적합 — 조기 종료·검증 필요(이번엔 튜닝 없음 규칙으로 600 고정)</li>
+<li>트리라 외삽 불가(RF와 같음) → 끝 영역 과소/과대 예측</li>
+<li>순차 학습이라 나무 간 병렬 불가(분할 탐색만 병렬)</li>
+</ul></div>
+</div>
+
+<h3>⑦ mp에서의 정합성·당위성</h3>
+<p><b>왜 넣어야 했나.</b> 데이터 규모(수천), 입력 형태(표 형식 기술자), 목표(회귀) 세 조건이 모두 그래디언트 부스팅의 전형적 적용 영역이다. 사전 가설 "표 형식 특징 + 수천 개 → 유력"은 결과로 확인됐다. 또 mp에서 중요한 것은 특징 하나의 효과가 아니라 <b>상호작용</b>이다 <span class="badge add">추가</span> — 예컨대 수소결합 공여체는 강직한 고리 골격 위에 있을 때 mp를 더 크게 올린다. 깊이 6의 나무는 이런 조건부 효과를 자연스럽게 표현한다. 마지막으로 SHAP으로 설명을 붙일 수 있어 31쪽의 "설명 검증"을 같은 모델에서 할 수 있다.</p>
+<p><b>맞지 않는 점.</b> 외삽 불가와 끝 영역 데이터 부족은 트리 공통의 한계다. 또 결정 패킹·대칭성처럼 <b>기술자에 없는 정보</b>는 어떤 트리도 만들어 낼 수 없다(Mirex, 쿼터페닐).</p>
+
+<h3>⑧ 우리 결과</h3>
+<div class="box result">
+<p><b>기술자</b>: random <b>30.0 K</b> (RMSE 41.4, R² 0.80) / scaffold <b>37.8 K</b> (R² 0.55) — 4열 모두 1위, 기준선의 41 % / 50 %. 같은 test 500개로 맞춘 비교에서도 32.7 K(random), 36.4 K(scaffold)로 1위.<br>
+<b>Morgan</b>: random <b>39.5</b> / scaffold <b>50.3 K</b> — 지문에서도 1위이지만 기술자보다 1.3배 나쁨.<br>
+SHAP 상위(scaffold): BertzCT 17.8, TPSA 17.4, RingCount 16.6, NumHDonors 9.2 K ↑ / NumRotatableBonds 5.7, FractionCSP3 4.7 K ↓ — 두 분할에서 상위 7개가 같고 화학 상식과 일치.<br>
+구간별: 300–450 K에서 29 K, 550–600 K에서 63 K(random)·82 K(scaffold) → 끝 영역 과소 예측(평균 회귀).</p>
+</div>
+
+<h3>⑨ 흔한 실수·자가진단</h3>
+<ul>
+<li>RF처럼 "나무를 더 넣으면 좋아진다"고 믿는 것 — 부스팅은 나무 수가 곧 학습 반복 수라 과적합한다.</li>
+<li>SHAP 값을 인과 효과로 읽는 것 — "모델이 그 특징에 얼마나 의존했나"이지 "자연이 그런가"가 아니다 <span class="badge ppt">31쪽</span>.</li>
+</ul>
+<div class="q"><h4>자가진단</h4><ol>
+<li>제곱 오차에서 g<sub>i</sub>, h<sub>i</sub>를 쓰고, 잎 값 w* = −G/(H+λ)가 "잎의 평균 잔차를 λ로 눌러 준 것"임을 보여라.</li>
+<li>η를 0.05 → 0.5로 올리고 나무 수를 그대로 두면 train/test 오차는 어떻게 되는가?</li>
+<li>colsample_bytree = 0.5는 RF의 어떤 장치와 같은 역할을 하는가?</li>
+</ol></div>
+
+<!-- ============================================================ 8. MLP -->
+<div class="pb"></div>
+<h2>8. MLP — 층을 쌓은 비선형 함수, GNN으로 가는 다리</h2>
+
+<h3>① 한 줄 직관 <span class="badge ppt">19쪽</span></h3>
+<p>입력 특징을 선형 결합 → 비선형(ReLU) → 다시 선형 결합 … 을 층층이 쌓아 복잡한 함수를 만든다. 가중치는 경사하강(Adam)으로 손실이 줄어드는 방향으로 조금씩 고친다. 완전연결 신경망이며, GIN의 각 층 안에도 이 MLP가 들어 있다.</p>
+
+<h3>② 가정과 가설 함수</h3>
+<div class="formula">
+h<sup>(1)</sup> = ReLU(W<sup>(1)</sup>x + b<sup>(1)</sup>) ∈ ℝ<sup>256</sup>, &nbsp; h<sup>(2)</sup> = ReLU(W<sup>(2)</sup>h<sup>(1)</sup> + b<sup>(2)</sup>) ∈ ℝ<sup>128</sup>, &nbsp; ŷ = w<sup>(3)T</sup>h<sup>(2)</sup> + b<sup>(3)</sup><br>
+ReLU(z) = max(0, z)
+<span class="v">W<sup>(1)</sup> ∈ ℝ<sup>256×d</sup>, W<sup>(2)</sup> ∈ ℝ<sup>128×256</sup>, w<sup>(3)</sup> ∈ ℝ<sup>128</sup>. 파라미터 수: d = 217 → (217·256+256) + (256·128+128) + (128+1) = <b>88,833</b>; d = 2048 → <b>557,569</b> (train 3,600개로!)</span>
+</div>
+<p>가정: 특징의 충분히 유연한 합성 함수로 y를 근사할 수 있다(보편 근사). 비선형 활성화가 없으면 층을 아무리 쌓아도 선형 모델과 같다 — ReLU가 "꺾임"을 만들어 조각별 선형 함수가 된다 <span class="badge add">추가</span>.</p>
+
+<h3>③ 손실함수와 학습 과정</h3>
+<div class="formula">
+L(θ) = (1/2m) Σ<sub>i</sub> (y<sub>i</sub> − ŷ<sub>i</sub>)<sup>2</sup> + (α/2m) ‖θ<sub>W</sub>‖<sup>2</sup> &nbsp;&nbsp;(sklearn: 제곱 오차 절반 + L2 벌점 α = 1e-3)<br>
+θ ← θ − η · Adam(∂L/∂θ) &nbsp;&nbsp;(역전파로 기울기 계산, 배치 200개마다 1회 갱신)
+</div>
+<p>학습 과정: (1) 표준화 → (2) train의 10 %를 내부 검증 집합으로 떼어 둠(early_stopping=True) → (3) 가중치 무작위 초기화 → (4) 배치마다 순전파(ŷ 계산) → 손실 → 역전파(연쇄법칙으로 모든 W의 기울기) → Adam 갱신 → (5) epoch 끝마다 검증 점수 확인, 10 epoch 개선 없으면 중단, 최대 300 epoch. <span class="badge add">추가</span> Ridge와 달리 <b>비볼록</b> 문제라 초기값·배치 순서에 따라 다른 국소해에 도달하며(random_state 고정으로 재현), 경사하강의 보폭(lr = 0.001)이 크면 발산, 작으면 느리다. sklearn MLP는 y를 표준화하지 않으므로 mp(수백 K)에서는 초기 손실이 매우 크고 출력층이 그 크기를 따라잡아야 한다.</p>
+
+<h3>④ 하이퍼파라미터의 영향</h3>
+<table>
+<tr><th style="width:24%">hidden_layer_sizes ↑</th><td>표현력·파라미터 ↑ → 데이터 적으면 과적합</td></tr>
+<tr><th>alpha(L2) ↑</th><td>가중치 축소 → 과적합 완화, 너무 크면 과소적합</td></tr>
+<tr><th>learning_rate</th><td>크면 진동·발산, 작으면 느림·국소해</td></tr>
+<tr><th>early_stopping</th><td>검증 손실이 다시 커지기 전에 멈춤 <span class="badge ppt">10쪽</span> — 사실상의 정규화; 단 train의 10 %를 잃음</td></tr>
+<tr><th>batch_size</th><td>작으면 잡음 큰 기울기(탐색적), 크면 안정적이지만 일반화가 나빠질 수 있음</td></tr>
+</table>
+
+<h3>⑤ 노트북의 실제 설정</h3>
+<div class="code">'MLP': make_pipeline(StandardScaler(), MLPRegressor(hidden_layer_sizes=(256, 128), alpha=1e-3,
+                                                    early_stopping=True, max_iter=300, random_state=SEED))
+# activation='relu', solver='adam', learning_rate_init=1e-3, batch_size='auto'(=200), validation_fraction=0.1, n_iter_no_change=10</div>
+
+<h3>⑥ 장점과 단점</h3>
+<div class="two">
+<div class="pros"><h4>장점</h4><ul>
+<li>임의의 비선형·상호작용을 표현(보편 근사)</li>
+<li>데이터가 늘수록 계속 좋아지는 편(learning curve가 늦게 포화)</li>
+<li>GNN·딥러닝의 기본 부품 — 역전파·경사하강·조기 종료를 여기서 배움</li>
+<li>다중 출력·다른 손실로 쉽게 확장</li>
+</ul></div>
+<div class="cons"><h4>단점</h4><ul>
+<li>데이터가 적으면 과적합; 파라미터 88,833~557,569 vs train 3,600</li>
+<li>학습 범위 밖에서 예측이 <b>임의</b> <span class="badge ppt">20쪽</span> → 우리 지문 scaffold 143 K(기준선의 1.9배)</li>
+<li>비볼록·초기값 의존, 스케일링 필수, 하이퍼파라미터 많음</li>
+<li>해석 어려움(블랙박스)</li>
+</ul></div>
+</div>
+
+<h3>⑦ mp에서의 정합성·당위성</h3>
+<p><b>왜 넣어야 했나.</b> 첫째, <b>GIN으로 가는 다리</b>다. GIN의 각 층은 MLP이고 학습 방식(MSE, Adam, 조기 종료)도 같다. 기술자 위의 MLP와 그래프 위의 GIN을 나란히 두면 "신경망이라서" 좋은지 "그래프라서" 좋은지를 분리할 수 있다. 둘째, 데이터 규모 대비 과적합의 교과서적 예를 보여 준다 — 19쪽의 "데이터 적으면 과적합"이 실제 수치로 나타난다.</p>
+<p><b>맞지 않는 점.</b> 5,000개(실제 학습 3,600개)는 557,569개 파라미터를 가진 모델에는 턱없이 적고, 지문의 희소 입력은 신호가 약해 임의의 함수를 학습한다. 트리처럼 평평하게 외삽하지도 않아 새 골격에서 가장 크게 틀린다. mp처럼 데이터가 수천 개인 물성에서 "기술자 위의 MLP"는 트리 앙상블을 이길 이유가 없다 <span class="badge add">추가</span>(표 형식 데이터에서 트리가 신경망을 이기는 것은 널리 관찰되는 현상).</p>
+
+<h3>⑧ 우리 결과</h3>
+<div class="box result">
+<p><b>기술자</b>: random <b>34.4 K</b> (R² 0.75, 3위 — Ridge급) / scaffold <b>53.6 K</b> (R² −0.07, 꼴찌 근처). 새 골격 비용 +19 K: 본 골격을 외웠다는 신호.<br>
+<b>Morgan</b>: random <b>67.0 K</b> / scaffold <b class="bad">143.1 K ✗</b> (R² −3.95). 기준선의 1.9배 — 20쪽 "학습 범위 밖에서 임의"의 극단적 예. 노트북 parity 그림에서 1,600 K짜리 예측이 축을 망가뜨린 것이 이 모델이다.</p>
+</div>
+
+<h3>⑨ 흔한 실수·자가진단</h3>
+<ul>
+<li>"딥러닝이니까 더 좋겠지" — 데이터 수·입력 형태가 모델을 고른다. 수천 개 표 형식에서는 트리가 보통 이긴다.</li>
+<li>epoch(전체 데이터 1회) / iteration(배치 1회 갱신) / batch size 혼동. max_iter=300은 epoch 수다.</li>
+</ul>
+<div class="q"><h4>자가진단</h4><ol>
+<li>d = 217에서 파라미터 수 88,833을 층별로 다시 계산하라. d = 2048이면 첫 층만 몇 개인가?</li>
+<li>활성화 함수를 모두 떼면 (256, 128) MLP는 어떤 모델과 같아지는가? 그 이유는?</li>
+<li>early_stopping=True가 "정규화"로 불리는 이유를 10쪽 그림의 validate 곡선으로 설명하라.</li>
+</ol></div>
+
+<!-- ============================================================ 9. GIN -->
+<div class="pb"></div>
+<h2>9. GIN — 분자 그래프에서 표현을 직접 배우는 신경망</h2>
+
+<h3>① 한 줄 직관 <span class="badge ppt">21쪽</span></h3>
+<p>원자를 노드, 결합을 엣지로 둔 그래프에서, 각 원자가 이웃 원자들의 벡터를 <b>합해</b> 자기 벡터를 갱신하는 층을 5번 쌓는다(이웃 5칸까지의 정보가 모임). 마지막에 원자 벡터들을 평균해 분자 벡터 하나(h<sub>G</sub>, 64차원)를 만들고 선형층으로 mp를 낸다. 사람이 정한 기술자 대신 모델이 특징을 배운다 <span class="badge ppt">15쪽</span>.</p>
+
+<h3>② 가정과 가설 함수</h3>
+<div class="formula">
+h<sub>v</sub><sup>(k)</sup> = MLP<sup>(k)</sup>( (1+ε) · h<sub>v</sub><sup>(k−1)</sup> + Σ<sub>u∈N(v)</sub> h<sub>u</sub><sup>(k−1)</sup> ), &nbsp; k = 1..5, &nbsp; h<sub>v</sub><sup>(0)</sup> = x<sub>v</sub> ∈ {0,1}<sup>147</sup><br>
+h<sub>G</sub> = READOUT({h<sub>v</sub><sup>(5)</sup>}) = (1/n) Σ<sub>v</sub> h<sub>v</sub><sup>(5)</sup> ∈ ℝ<sup>64</sup> &nbsp;(global_mean_pool), &nbsp;&nbsp; ŷ<sub>scaled</sub> = w<sup>T</sup>h<sub>G</sub> + b
+<span class="v">N(v): 원자 v의 이웃 원자 집합, ε = 0 (PyG 기본, 학습 안 함), MLP<sup>(k)</sup> = Linear → ReLU → Linear (147→128→128, 128→128→128 ×3, 128→64→64), 층 사이 ReLU + dropout 0.3. 파라미터 <b>147,009</b>. 입력 x<sub>v</sub>는 원소·전하·혼성·H수·방향족·원자가·연결수·고리 + 작용기 SMARTS 110. <b>결합 특징 16개는 GIN이 쓰지 않는다</b>(GINE이면 사용)</span>
+</div>
+<p>가정: (i) 분자의 물성은 원자와 그 이웃 관계(위상)에서 나온다. (ii) 원자 번호 매기기 순서와 무관해야 한다(<b>순열 불변</b>: 합·평균은 순서를 바꿔도 같음). (iii) 이웃 정보를 <b>합(sum)</b>으로 모으면 이웃의 개수까지 구별된다 — 평균·최댓값은 {A, B}와 {A, A, B, B}를 구별하지 못하지만 합은 구별한다 <span class="badge ppt">21쪽 그림</span>. <span class="badge add">추가</span> 이 점에서 GIN은 1-WL(Weisfeiler–Lehman) 그래프 동형 검사와 같은 표현력을 갖는, 메시지 전달 신경망 중 가장 표현력이 높은 구조다(Xu et al. 2019). 2D 그래프이므로 3D 배좌·입체·결정 패킹은 입력에 없다.</p>
+
+<div class="box">
+<h4>shape 따라가기 <span class="badge add">추가</span> — 피페리딘 C1CCNCC1 (원자 6, 결합 6)</h4>
+<p>x: (6 × 147), edge_index: (2 × 12)(결합 6개 × 양방향), edge_attr: (12 × 16, GIN은 미사용). 층 1: 원자마다 자기 + 이웃 2개 벡터를 더한 (147,) → MLP → (128,) ⇒ (6 × 128). 층 2–4: (6 × 128). 층 5: (6 × 64). mean pool: (1 × 64). Linear(64→1): (1 × 1) = 표준화된 mp → 역변환 ŷ = z·σ<sub>train</sub> + μ<sub>train</sub>. 배치 64개 분자는 원자를 이어 붙인 큰 그래프 하나로 처리되고 <code>data.batch</code>가 어느 원자가 어느 분자인지 알려 준다.</p>
+</div>
+
+<h3>③ 손실함수와 학습 과정 (train.py)</h3>
+<div class="formula">
+학습 손실: &nbsp;L = MSE(ŷ<sub>scaled</sub>, (y − μ<sub>train</sub>)/σ<sub>train</sub>) &nbsp;&nbsp;(표준화된 y; 신경망은 y 크기에 민감) <span class="badge ppt">9쪽</span><br>
+보고 지표: &nbsp;validate / test MAE [K] (역변환 후) &nbsp;&nbsp;— 학습과 보고가 다른 함수<br>
+갱신: &nbsp;θ ← θ − η · AdamW(∇<sub>θ</sub>L), &nbsp; η = 10<sup>−3</sup>, &nbsp; 기울기 ±10 자르기, &nbsp; ReduceLROnPlateau(patience 10, ×0.8)
+</div>
+<p>학습 과정: (1) <code>feature.py</code>로 분자 5,000개를 그래프로 → (2) 80/10/10 random 분할(train 4,000 / validate 500 / test 500) → (3) Scaler를 <b>train으로만</b> fit해 y 표준화(연구실 원본은 train+val+test — 14쪽의 누수 예를 코드가 고침) → (4) epoch마다: 배치 64개씩 순전파 → MSE → 역전파 → AdamW → (5) epoch 끝에 validate MAE 계산, 10 epoch 정체 시 lr ×0.8, <b>30 epoch</b> 정체 시 중단하고 최선 가중치 복원(조기 종료 <span class="badge ppt">10쪽</span>) → (6) test 평가, parity·학습곡선 저장. 우리 실행: 145 epochs(최선 114), 240 s.</p>
+
+<h3>④ 하이퍼파라미터의 영향</h3>
+<table>
+<tr><th style="width:24%">층 수 ↑</th><td>수용 영역(이웃 거리) ↑, 멀리 있는 치환기 효과를 볼 수 있음; 너무 깊으면 모든 원자 벡터가 비슷해지는 과평활(over-smoothing) <span class="badge add">추가</span></td></tr>
+<tr><th>hidden ↑</th><td>표현력·파라미터 ↑ → 데이터 적으면 과적합</td></tr>
+<tr><th>readout mean vs sum</th><td>mean은 분자 크기 정보를 지움(원자 6개와 60개의 평균 벡터 크기가 같음) → 크기 의존 물성에 불리; sum은 크기를 담지만 값 범위가 커짐 (2주차 <code>--pooling sum</code>)</td></tr>
+<tr><th>dropout 0.3</th><td>학습 때 원자 벡터 성분 30 %를 무작위로 0 → 과적합 완화; 평가 때는 끔</td></tr>
+<tr><th>batch 64 / lr 1e-3</th><td>N &lt; 1만이면 64 <span class="badge ppt">21쪽</span>; 작은 배치 = 잡음 큰 기울기(초반 validate 요동의 원인)</td></tr>
+<tr><th>patience 30</th><td>validate가 잡음 많을 때(scaffold의 희귀 골격 validate) 너무 일찍 멈출 수 있음 — 우리 scaffold 실행이 45 epoch에 멈춘 이유</td></tr>
+</table>
+
+<h3>⑤ 코드의 실제 설정 (models.py, train.py)</h3>
+<div class="code">GraphRegressor(147, 16, conv='GIN', num_layers=5, hidden_channels=128, fingerprint_channels=64,
+               dropout=0.3, pooling='mean')              # 147,009 파라미터
+AdamW(lr=1e-3); ReduceLROnPlateau(patience=10, factor=0.8); grad clamp ±10
+F.mse_loss(out, batch.y)  # y는 Scaler('standard').fit(train) 으로 표준화
+early stop: validate MAE 가 30 epoch 동안 1e-4 이상 좋아지지 않으면 중단 → best_state 복원</div>
+
+<h3>⑥ 장점과 단점</h3>
+<div class="two">
+<div class="pros"><h4>장점</h4><ul>
+<li>사람이 정한 특징이 필요 없음 — 표현을 데이터에서 배움(15쪽 오른쪽 끝)</li>
+<li>순열 불변·분자 크기 가변 입력을 자연스럽게 처리</li>
+<li>sum 집계로 1-WL 수준의 구별력(메시지 전달 중 최고)</li>
+<li>데이터가 많아질수록 계속 좋아질 여지; 원자 기여·BGNN σ로 확장(4주차, 22쪽)</li>
+<li>우리 결과: 지문 기반 6모델은 모두 이김</li>
+</ul></div>
+<div class="cons"><h4>단점</h4><ul>
+<li>데이터를 많이 요구(“1만 개 이상” <span class="badge ppt">19쪽</span>); 5,000개에서는 기술자 XGBoost·RF에 뒤짐</li>
+<li>학습 비용 240 s vs XGBoost 5 s; 하이퍼파라미터 많음</li>
+<li>mean pool이 크기 정보를 지움 → 작은 분자에서 큰 오차(바이닐 아세테이트 177 → 388 K)</li>
+<li>2D 그래프: 입체·3D·결정 패킹 없음 — mp의 핵심 변수가 입력에 없음</li>
+<li>해석이 어려움(원자 기여는 4주차)</li>
+</ul></div>
+</div>
+
+<h3>⑦ mp에서의 정합성·당위성</h3>
+<p><b>왜 넣어야 했나.</b> 첫째, 연구실의 실제 물성 모델(BGNN_unary)이 이 구조이므로 <span class="badge ppt">21, 26쪽</span>, 고전 모델 사다리의 꼭대기와 비교해 "구조를 직접 배우는 것이 지금 데이터 규모에서 이득인가"를 묻는 것이 1주차 과제의 핵심 질문이다(49쪽 4단계). 둘째, 기술자·지문은 사람이 미리 정한 요약이라 <b>정의되지 않은 패턴</b>(특정 원자 배열)은 담을 수 없지만 GNN은 배울 수 있다 — mp처럼 치환기 위치·대칭성 같은 "배치"가 중요한 물성에서 이 가능성은 시험할 가치가 있다. 셋째, 2·3·4주차의 모든 변경(readout, GINE, BGNN, XAI)이 이 모델 위에서 이루어진다.</p>
+<p><b>맞지 않는 점(지금 단계에서).</b> 데이터 5,000개는 경계 아래이고, mean pool은 크기 의존을 지우며, 결합 특징을 버린다. 그리고 가장 근본적으로, 녹는점을 좌우하는 결정 패킹·대칭성·분자간 수소결합은 2D 그래프 안에 없다 <span class="badge add">추가</span>. 따라서 GIN이 기술자 XGBoost를 못 넘은 것은 "GNN이 나빠서"가 아니라 "데이터 규모 + 입력 정보 + readout" 세 가지가 아직 맞지 않아서다 — 2주차에 바꿀 것이 바로 그것들이다.</p>
+
+<h3>⑧ 우리 결과</h3>
+<div class="box result">
+<p><b>random 80/10/10 (test 500)</b>: MAE <b>36.5 K</b>, RMSE 50.9, R² 0.71, 기준선 75.2 K (0.49배), 145 epochs(최선 114), 240 s.<br>
+<b>진단</b>: train loss는 epoch 40 → 140에 0.18 → 0.08로 반이 됐지만 validate MAE는 34.0 → 32.9로 1 K만 개선 → 간격이 벌어지는 <b>가벼운 과적합</b>, 조기 종료가 억제. validate가 다시 커지거나 둘 다 커지는 불안정은 없음 <span class="badge ppt">10, 24쪽</span>.<br>
+<b>같은 test 500개 비교</b>: XGBoost+기술자 32.7 &lt; RF+기술자 35.7 &lt; <b>GIN 36.5</b> &lt; MLP+기술자 37.1 … &lt; XGBoost+Morgan 41.0 — 3위, 지문 모델 6종은 모두 이김. 19쪽 가설("1만 개 이상에서 유리")과 일치.<br>
+<b>scaffold([추가] 실행)</b>: 41.8 K, 45 epochs에 조기 종료(validate가 희귀 골격이라 44–52 K 사이로 요동) — 같은 분할의 XGBoost+기술자 36.4보다 5.4 K 뒤, 역시 3위.<br>
+<b>후분석</b>: 가장 틀린 20개가 거의 전부 <b>작은 비고리 분자</b> — mean pool + 원자 수 적음. XGBoost가 큰 대칭 분자에서 틀리는 것과 정반대 → 두 모델이 서로 보완적.</p>
+</div>
+
+<h3>⑨ 흔한 실수·자가진단</h3>
+<ul>
+<li>학습곡선 (a) train loss(표준화 MSE)와 (b) validate MAE(K)의 높이를 직접 비교하는 것 — 축이 다르다. 모양(기울기·정체 시점)을 비교한다.</li>
+<li>"GIN이 결합 특징도 쓴다"고 생각하는 것 — PyG의 GIN은 edge_attr를 받지 않는다. 쓰려면 GINE.</li>
+</ul>
+<div class="q"><h4>자가진단</h4><ol>
+<li>21쪽 식의 (1+ε), Σ, MLP, READOUT이 models.py의 어느 줄에 해당하는가? ε의 실제 값은?</li>
+<li>이웃 집합 {A, B}와 {A, A, B, B}를 mean·max·sum 집계로 각각 계산해 어느 것이 구별하는지 보여라.</li>
+<li>mean pool을 sum pool로 바꾸면 원자 6개 분자와 60개 분자의 h<sub>G</sub>는 어떻게 달라지는가? 그것이 작은 분자 오차에 어떤 영향을 줄 것으로 예상하는가?</li>
+<li>validate 최저 32.9 K &lt; test 36.5 K인 이유를 "선택 편향"으로 설명하라.</li>
+</ol></div>
+
+<!-- ============================================================ 10. 비교표 -->
+<div class="pb"></div>
+<h2>10. 모델 비교표</h2>
+<table style="font-size:8.4pt">
+<tr><th style="width:11%">항목</th><th>Ridge</th><th>kNN</th><th>SVR (RBF)</th><th>Random Forest</th><th>XGBoost</th><th>MLP</th><th>GIN</th></tr>
+<tr><td>문제 유형</td><td colspan="7">모두 지도학습 회귀 (mp [K])</td></tr>
+<tr><td>모델 가정</td><td>가법적 선형</td><td>가까우면 비슷</td><td>매끄러운 비선형</td><td>축 정렬 구간별 상수</td><td>구간별 상수의 순차 합</td><td>합성 비선형</td><td>이웃 관계(순열 불변)</td></tr>
+<tr><td>가설 함수</td><td>wᵀx + b</td><td>이웃 가중 평균</td><td>Σα K(xᵢ, x) + b</td><td>나무 평균</td><td>Ση f<sub>k</sub>(x)</td><td>ReLU 층 2개 + 선형</td><td>MPNN 5층 + mean pool + 선형</td></tr>
+<tr><td>손실 / 목적</td><td>MSE + λ‖w‖²</td><td>없음(저장)</td><td>½‖w‖² + C·ε-둔감</td><td>잎 MSE 감소(탐욕)</td><td>MSE 2차 근사 + Ω</td><td>½MSE + α‖W‖²</td><td>MSE(표준화 y)</td></tr>
+<tr><td>최적화</td><td>닫힌 해(Cholesky)</td><td>—</td><td>쌍대 QP(SMO)</td><td>탐욕 분할 × 300, 병렬</td><td>탐욕 분할 × 600, 순차</td><td>Adam, 역전파</td><td>AdamW, 역전파</td></tr>
+<tr><td>볼록성</td><td class="chk">볼록</td><td>—</td><td class="chk">볼록</td><td>비볼록(탐욕)</td><td>비볼록(탐욕)</td><td class="bad">비볼록</td><td class="bad">비볼록</td></tr>
+<tr><td>파라미터 수</td><td>d+1 (218 / 2,049)</td><td>데이터 자체</td><td>SV 수(≤ m)</td><td>나무 300 × 잎</td><td>600 × ≤64잎</td><td>88,833 / 557,569</td><td>147,009</td></tr>
+<tr><td>하이퍼파라미터</td><td>λ</td><td>k, 거리, 가중</td><td>C, ε, γ</td><td>B, 깊이, max_features</td><td>B, η, 깊이, subsample, λ</td><td>층, α, lr, 배치</td><td>층, hidden, pool, dropout, lr, patience</td></tr>
+<tr><td>편향/분산</td><td>편향 ↑</td><td>k 작으면 분산 ↑</td><td>C·γ로 조절</td><td>분산 ↓(평균)</td><td>편향 ↓(순차)</td><td>분산 ↑(적은 데이터)</td><td>분산 ↑(적은 데이터)</td></tr>
+<tr><td>스케일링</td><td>필요</td><td>필요</td><td>필요</td><td>불필요</td><td>불필요</td><td>필요</td><td>y만 표준화</td></tr>
+<tr><td>학습 범위 밖 <span class="badge ppt">20쪽</span></td><td>추세 유지</td><td>평평</td><td>상수로 수렴</td><td>평평</td><td>평평</td><td class="bad">임의</td><td>임의(신경망)</td></tr>
+<tr><td>학습 시간(기술자/지문, s)</td><td>0.04 / 0.6</td><td>0.06 / 0.3</td><td>2.2 / 14</td><td>32 / 58</td><td>4.8 / 4.4</td><td>5.6 / 23</td><td>240 (그래프)</td></tr>
+<tr><td>해석</td><td class="chk">계수</td><td class="chk">이웃 목록</td><td>어려움</td><td>중요도</td><td class="chk">SHAP</td><td>어려움</td><td>원자 기여(4주차)</td></tr>
+<tr><td>데이터 요구</td><td>적어도 됨</td><td>조밀해야</td><td>수천(비용)</td><td>수백~</td><td>수천~</td><td>수만~</td><td>수만~</td></tr>
+<tr><td><b>기술자 r / s</b></td><td>35.4 / 45.1</td><td>38.5 / 51.7</td><td>35.4 / 44.0</td><td>33.5 / 40.7</td><td><b>30.0 / 37.8</b></td><td>34.4 / 53.6</td><td>36.5 / 41.8 (그래프, 80/10/10)</td></tr>
+<tr><td><b>Morgan r / s</b></td><td>61.0 / <span class="bad">96.2</span></td><td><span class="bad">86.2 / 125.9</span></td><td>54.8 / 55.5</td><td>40.9 / 55.5</td><td><b>39.5 / 50.3</b></td><td>67.0 / <span class="bad">143.1</span></td><td>—</td></tr>
+<tr><td>가설 적중</td><td>기대보다 좋음(기술자)</td><td>적중(새 골격 약함)</td><td>중위권, 지문 평평</td><td>적중(안정 2위)</td><td class="chk">적중(1위)</td><td>적중(과적합)</td><td class="chk">적중(데이터 부족, 3위)</td></tr>
+</table>
+<p class="small">r = random, s = scaffold, test MAE [K], 기준선 72.5 / 76.0 (노트북), 75.2 / 79.7 (train.py 분할). 빨간 값 = 기준선보다 나쁨.</p>
+
+<div class="box key">
+<h4>왜 이런 차이가 나는가 — 가정과 구조의 관점에서 한 번에</h4>
+<ul>
+<li><b>표현이 모델보다 컸다</b>: 같은 모델에서 기술자 → 지문으로 바꾸면 1.2–2.2배 나빠졌고, 같은 표현에서 모델을 바꾸는 차이(기술자 30–38 K)는 그보다 작다. mp는 "분자 전체의 극성·크기·강직성 요약"이 좌우하는 물성이라 기술자가 맞고, 부분구조 유무(지문)는 그 요약을 간접적으로만 담는다.</li>
+<li><b>트리가 1·2위</b>: 수천 개 표 형식 데이터 + 상호작용 + 스케일 무관 + 이상치 둔감. 외삽 불가는 끝 영역에서만 대가를 치렀다.</li>
+<li><b>거리·내적 모델이 지문에서 무너짐</b>: 표준화된 희소 0/1 비트에서 희귀 비트가 거리(kNN, SVR)·계수(Ridge)·기울기(MLP)를 독점. 트리는 비트를 있다/없다로만 보므로 무사했다.</li>
+<li><b>GIN은 3위</b>: 데이터 5,000은 경계 아래, mean pool은 크기를 지움, 결정 정보는 입력에 없음. 그러나 지문 6종은 모두 이겼다 — "모델이 배우는 특징"이 "사람이 정한 부분구조 특징"보다는 나았다.</li>
+</ul>
+</div>
+
+<!-- ============================================================ 11. 표현 × 모델 -->
+<div class="pb"></div>
+<h2>11. 표현 × 모델의 궁합 — 결과가 왜 그렇게 나왔는가</h2>
+
+<h3>11.1 기술자 217개가 mp에 맞는 이유</h3>
+<p>RDKit 기술자에는 mp를 결정하는 물리량의 대리변수가 직접 들어 있다: TPSA(극성 표면 → 쌍극자·수소결합), NumHDonors·NHOHCount(결정 내 수소결합 네트워크), RingCount·fr_bicyclic(강직성 → 녹을 때 엔트로피 이득 작음 → mp ↑), NumRotatableBonds·FractionCSP3(유연성 → 패킹 느슨 → mp ↓), BertzCT·MolWt(크기 → 분산력). SHAP 상위 7개가 정확히 이것들이었고, 방향도 모두 화학 상식과 맞았다. 즉 <b>기술자는 이미 "절반쯤 모델"</b>이다 — 사람이 물리를 넣어 둔 특징이라 데이터가 적어도 잘 작동한다 <span class="badge ppt">15쪽 "사람이 정한 특징"</span>.</p>
+
+<h3>11.2 Morgan 지문이 mp에 약한 이유</h3>
+<p>지문은 "반경 2 안의 부분구조가 있다/없다"의 2,048비트다. 작용기 효과(이 치환기가 있으면 +ΔT)는 담지만, 분자 전체의 극성 총량·크기·고리 수 같은 <b>집계량</b>은 비트 여러 개의 합으로만 간접 표현된다. 게다가 분자당 켜진 비트가 평균 25.9개(1.3 %)로 희소하고, 희귀 비트가 전체의 79 %(1,608 / 2,048 비트가 빈도 1 % 미만)다. 이 희소성이 모델별로 다른 재앙을 부른다:</p>
+<table>
+<tr><th style="width:14%">모델</th><th>표준화된 희소 비트에서 생기는 일</th><th style="width:22%">결과</th></tr>
+<tr><td>kNN</td><td>제곱 거리의 76 %가 희귀 비트에서 나옴 → 이웃 = 희귀 비트가 적은 작은 분자(무거운 원자 10.3 vs 16.1) → 체계적 과소 예측. Tanimoto로 바꾸면 92.4 → 49.8 K(300개 시험) <span class="badge add">추가 검증</span></td><td>86.2 / 125.9 ✗</td></tr>
+<tr><td>Ridge</td><td>희귀 비트 열은 표준화 후 값이 ±30으로 커지고, λ = 1은 사실상 무정규화 → 희귀 비트에 큰 계수 → 새 골격의 처음 보는 비트 조합에서 폭주</td><td>61.0 / 96.2 ✗</td></tr>
+<tr><td>MLP</td><td>557,569 파라미터가 3,600개 희소 입력을 외움 → 범위 밖에서 임의 출력(1,600 K 예측)</td><td>67.0 / 143.1 ✗</td></tr>
+<tr><td>SVR</td><td>거의 모든 쌍의 거리가 멀어 K ≈ 0 → 예측이 상수 쪽 → random ≈ scaffold</td><td>54.8 / 55.5</td></tr>
+<tr><td>RF, XGBoost</td><td>비트를 "있다/없다"로만 보고 표준화 영향 없음; 희귀 비트는 분할 이득이 작아 자연히 무시됨</td><td>40.9 / 55.5, 39.5 / 50.3</td></tr>
+</table>
+<p>교훈: <b>표현의 성질(희소·이진)에 맞는 거리·정규화·모델을 골라야 한다</b>. 지문에는 Tanimoto 거리, 표준화 생략, 더 큰 λ, 트리 모델이 맞고, 15쪽이 지문에 kNN을 "맞는 모델"로 적은 것은 Tanimoto 거리를 전제한 것이다.</p>
+
+<h3>11.3 그래프가 "모델이 배우는 특징"인 이유와 대가</h3>
+<p>GIN의 h<sub>G</sub>(64차원)는 학습이 끝난 뒤 보면 "이 데이터에 맞춰 만들어진 기술자"다. 원자 특징 147개에서 시작해 이웃 5칸의 패턴을 합성하므로 사람이 정의하지 않은 부분구조도 담을 수 있다. 대가는 그 특징을 데이터에서 배워야 한다는 것 — 5,000개는 부족했고(3위), 평균 풀링이 크기를 지워 작은 분자에서 틀렸다. 그래도 지문보다 나았다는 사실은, 같은 "부분구조" 정보라도 고정 해시(지문)보다 학습된 합성(GNN)이 낫다는 뜻이다.</p>
+
+<div class="fig"><img src="file:///home/claude/work/out/mp_presentation/slides/figs/fig_S4_results_table.png" alt="results table"><div class="cap">그림 1. 결과표 — 모델 6 × 표현 2 × 분할 2, test MAE [K]. 굵게 = 열 최저, × = 기준선보다 나쁨. 기술자 열이 지문 열보다 일관되게 낮고, 트리 두 모델이 네 열 모두 상위.</div></div>
+
+<!-- ============================================================ 12. 결론 -->
+<div class="pb"></div>
+<h2>12. 결론 — 이 주제에서 모델 선택의 당위성 종합</h2>
+
+<h3>12.1 "왜 이 모델들이어야 했나"에 대한 답</h3>
+<ol>
+<li><b>방법론적 당위성</b>: 회귀 문제에서 모델의 가치는 절대 점수가 아니라 사다리 위의 위치로 읽힌다. 기준선(72.5 K) → 선형(35.4) → 커널·이웃(35–38) → 트리 앙상블(30–33) → 신경망(34) → 그래프 신경망(36.5, 다른 test)의 사다리가 있었기에 "비선형은 5 K, 앙상블은 2 K, GNN은 아직 −" 같은 말을 할 수 있다 <span class="badge ppt">19쪽</span>.</li>
+<li><b>가정의 다양성</b>: 일곱 모델은 가법성·국소 유사성·매끄러움·축 정렬 구간·합성 비선형·관계 구조라는 서로 다른 귀납 편향을 대표한다. 어느 가정이 mp와 맞는지는 돌려 봐야 알며, 결과는 "축 정렬 구간 + 상호작용(트리)"이 가장 맞고 "국소 유사성(kNN)"이 가장 안 맞는다고 말해 주었다 — 이것은 mp가 작은 구조 변화에 민감하고(cliff) 특징 상호작용이 큰 물성이라는 화학적 사실과 일치한다.</li>
+<li><b>표현과의 교차 설계</b>: 같은 여섯 모델을 두 표현에 돌렸기 때문에 "표현 효과(기술자 vs 지문: 1.2–2.2배)"와 "모델 효과(30–38 K)"를 분리할 수 있었다. 하나의 표현만 썼다면 kNN의 실패를 "kNN이 나쁘다"로 잘못 읽었을 것이다.</li>
+<li><b>mp의 성격과의 정합</b>: 측정 잡음(86종 ≥ 50 K)이 크고 결정 성질이라 2D 표현의 한계가 있는 물성이다. 따라서 (i) 모든 모델이 300–450 K에서 27–32 K로 수렴하는 "잡음 하한" 근처의 비교이고, (ii) 외삽 불가(트리)보다 입력 정보 부재(대칭성·패킹)가 더 근본적인 한계이며, (iii) 설명(SHAP·틀린 분자)이 데이터 오류를 찾아내는 실용적 가치를 가진다. 이 세 가지를 모두 보여 줄 수 있는 모델 구성이었다.</li>
+<li><b>다음 단계와의 연결</b>: GIN은 2·3·4주차(readout·GINE·BGNN·XAI)의 기반이고, XGBoost+SHAP은 그 결과를 대조할 "설명 가능한 최고 고전 모델"이다. 1주차의 선택은 이후 주차의 비교 기준을 세우는 선택이기도 했다.</li>
+</ol>
+
+<h3>12.2 한 문장 정리</h3>
+<div class="box key">
+<p><b>mp 예측은 "수천 개의 잡음 큰 회귀 데이터"이며, 이런 문제에서는 물리를 담은 기술자 위의 트리 앙상블(XGBoost 30.0 / 37.8 K)이 기본 설정만으로 가장 믿을 만한 답을 주고, 선형·이웃·커널·신경망 모델은 그 답이 얼마나 좋은지, 무엇 때문에 좋은지를 재는 자가 된다. 그래프 신경망(GIN 36.5 K)은 아직 데이터·readout·입력 정보가 모자라 3위에 머물렀지만, 지문 기반 모델을 모두 이겼고 2주차에 바꿀 것이 분명하다는 점에서 가장 많은 것을 가르쳐 준 모델이다.</b></p>
+</div>
+
+<h3>12.3 2주차에 바꿀 것 (후분석이 가리킨 순서) <span class="badge ppt">49쪽</span></h3>
+<ol>
+<li><code>--pooling sum</code>: mean pool이 분자 크기를 지워 작은 분자에서 틀린다 → GIN 논문의 readout(sum)으로.</li>
+<li><code>--conv GINE</code>: 결합 특징 16개(공액·회전 가능)를 쓰도록 — 회전 가능 결합은 SHAP 6위의 중요한 변수.</li>
+<li><code>--max_n 0</code>: 전체 19,945개로 learning curve 확인 — GNN은 데이터가 적을수록 불리 <span class="badge ppt">19, 23쪽</span>.</li>
+<li>(고전 모델 쪽) 지문에는 Tanimoto 거리·표준화 생략을, Ridge에는 더 큰 λ를 — 단 test를 보고 고르지 말고 train 안의 교차검증으로.</li>
+</ol>
+
+<!-- ============================================================ 13. 부록 -->
+<div class="pb"></div>
+<h2>13. 부록</h2>
+
+<h3>A. 결과표 전체 (노트북, 표본 5,000, 80/20)</h3>
+<table>
+<tr><th>표현</th><th>모델</th><th class="num">MAE r</th><th class="num">MAE s</th><th class="num">RMSE r</th><th class="num">RMSE s</th><th class="num">R² r</th><th class="num">R² s</th><th class="num">시간 r [s]</th></tr>
+<tr><td>기술자</td><td>XGBoost</td><td class="num"><b>29.97</b></td><td class="num"><b>37.77</b></td><td class="num">41.36</td><td class="num">50.90</td><td class="num">0.80</td><td class="num">0.55</td><td class="num">4.8</td></tr>
+<tr><td>기술자</td><td>RandomForest</td><td class="num">33.53</td><td class="num">40.69</td><td class="num">45.32</td><td class="num">54.23</td><td class="num">0.76</td><td class="num">0.49</td><td class="num">31.6</td></tr>
+<tr><td>기술자</td><td>MLP</td><td class="num">34.40</td><td class="num">53.58</td><td class="num">46.50</td><td class="num">78.42</td><td class="num">0.75</td><td class="num">−0.07</td><td class="num">5.6</td></tr>
+<tr><td>기술자</td><td>Ridge</td><td class="num">35.37</td><td class="num">45.08</td><td class="num">46.93</td><td class="num">60.18</td><td class="num">0.74</td><td class="num">0.37</td><td class="num">0.04</td></tr>
+<tr><td>기술자</td><td>SVR</td><td class="num">35.44</td><td class="num">43.97</td><td class="num">50.17</td><td class="num">59.85</td><td class="num">0.70</td><td class="num">0.38</td><td class="num">2.2</td></tr>
+<tr><td>기술자</td><td>kNN</td><td class="num">38.48</td><td class="num">51.68</td><td class="num">52.88</td><td class="num">69.56</td><td class="num">0.67</td><td class="num">0.16</td><td class="num">0.06</td></tr>
+<tr><td>Morgan</td><td>XGBoost</td><td class="num"><b>39.52</b></td><td class="num"><b>50.27</b></td><td class="num">53.80</td><td class="num">67.47</td><td class="num">0.66</td><td class="num">0.21</td><td class="num">4.4</td></tr>
+<tr><td>Morgan</td><td>RandomForest</td><td class="num">40.94</td><td class="num">55.49</td><td class="num">56.11</td><td class="num">74.79</td><td class="num">0.63</td><td class="num">0.03</td><td class="num">57.6</td></tr>
+<tr><td>Morgan</td><td>SVR</td><td class="num">54.81</td><td class="num">55.52</td><td class="num">71.23</td><td class="num">72.71</td><td class="num">0.40</td><td class="num">0.08</td><td class="num">14.4</td></tr>
+<tr><td>Morgan</td><td>Ridge</td><td class="num">61.01</td><td class="num"><span class="bad">96.20</span></td><td class="num">80.89</td><td class="num">127.07</td><td class="num">0.23</td><td class="num">−1.81</td><td class="num">0.6</td></tr>
+<tr><td>Morgan</td><td>MLP</td><td class="num">67.02</td><td class="num"><span class="bad">143.12</span></td><td class="num">90.15</td><td class="num">168.66</td><td class="num">0.04</td><td class="num">−3.95</td><td class="num">22.7</td></tr>
+<tr><td>Morgan</td><td>kNN</td><td class="num"><span class="bad">86.22</span></td><td class="num"><span class="bad">125.91</span></td><td class="num">109.83</td><td class="num">147.98</td><td class="num">−0.42</td><td class="num">−2.81</td><td class="num">0.3</td></tr>
+<tr><td colspan="2">기준선 (train 평균)</td><td class="num">72.51</td><td class="num">75.96</td><td colspan="5"></td></tr>
+<tr><td>그래프</td><td>GIN (train.py 80/10/10, test 500)</td><td class="num">36.52</td><td class="num">41.81</td><td class="num">50.92</td><td class="num">54.50</td><td class="num">0.71</td><td class="num">0.44</td><td class="num">240 / 345</td></tr>
+<tr><td colspan="2">기준선 (train.py 분할)</td><td class="num">75.15</td><td class="num">79.74</td><td colspan="5"></td></tr>
+</table>
+
+<h3>B. 같은 분할에서의 비교 (train.py random 80/10/10 재현, train 4,000 / test 500)</h3>
+<table>
+<tr><th>순위</th><th>모델 + 표현</th><th class="num">MAE [K]</th><th class="num">RMSE</th><th class="num">R²</th><th>순위</th><th>모델 + 표현</th><th class="num">MAE [K]</th><th class="num">RMSE</th><th class="num">R²</th></tr>
+<tr><td>1</td><td>XGBoost + 기술자</td><td class="num"><b>32.7</b></td><td class="num">44.3</td><td class="num">0.78</td><td>8</td><td>kNN + 기술자</td><td class="num">42.1</td><td class="num">55.1</td><td class="num">0.66</td></tr>
+<tr><td>2</td><td>RandomForest + 기술자</td><td class="num">35.7</td><td class="num">47.5</td><td class="num">0.75</td><td>9</td><td>RandomForest + Morgan</td><td class="num">42.2</td><td class="num">55.4</td><td class="num">0.66</td></tr>
+<tr><td>3</td><td><b>GIN (그래프)</b></td><td class="num"><b>36.5</b></td><td class="num">50.9</td><td class="num">0.71</td><td>10</td><td>SVR + Morgan</td><td class="num">55.8</td><td class="num">73.1</td><td class="num">0.40</td></tr>
+<tr><td>4</td><td>MLP + 기술자</td><td class="num">37.1</td><td class="num">51.7</td><td class="num">0.70</td><td>11</td><td>Ridge + Morgan</td><td class="num">60.2</td><td class="num">78.7</td><td class="num">0.31</td></tr>
+<tr><td>5</td><td>Ridge + 기술자</td><td class="num">38.5</td><td class="num">51.1</td><td class="num">0.71</td><td>12</td><td>MLP + Morgan</td><td class="num">68.4</td><td class="num">89.6</td><td class="num">0.10</td></tr>
+<tr><td>6</td><td>SVR + 기술자</td><td class="num">38.6</td><td class="num">52.9</td><td class="num">0.69</td><td>13</td><td>kNN + Morgan</td><td class="num"><span class="bad">91.8</span></td><td class="num">116.1</td><td class="num">−0.50</td></tr>
+<tr><td>7</td><td>XGBoost + Morgan</td><td class="num">41.0</td><td class="num">53.6</td><td class="num">0.68</td><td>—</td><td>기준선 (train 평균 377.8 K)</td><td class="num">75.2</td><td></td><td></td></tr>
+</table>
+
+<div class="fig"><img src="file:///home/claude/work/out/mp_presentation/slides/figs/fig_S5_parity_xgb_gin.png" alt="parity"><div class="cap">그림 2. Parity plot — XGBoost + 기술자(random, scaffold)와 GIN(random). 세 모델 모두 500 K 위는 대각선 아래(과소), 250 K 아래는 위(과대)로 눌린다: 끝 영역 데이터 부족 + 평균 회귀.</div></div>
+
+<div class="fig"><img src="file:///home/claude/work/practice/results/mp_GNN-GIN_mean_random_curve.png" alt="GIN curve" style="max-width:88%"><div class="cap">그림 3. GIN 학습곡선 (train.py 출력 그대로). (a) train loss(표준화 MSE)는 끝까지 감소, (b) validate MAE[K]는 epoch 40 이후 33–34 K에서 정체 → 가벼운 과적합, 조기 종료(최선 114, 멈춤 144).</div></div>
+
+<div class="fig"><img src="file:///home/claude/work/out/mp_presentation/slides/figs/fig_S6_shap_top10.png" alt="SHAP"><div class="cap">그림 4. XGBoost + 기술자(scaffold test 1,000)의 SHAP 상위 10. 파랑 = 값이 커지면 mp ↑, 주황 = mp ↓. 괄호는 random 분할의 값.</div></div>
+
+<div class="fig"><img src="file:///home/claude/work/out/mp_presentation/slides/figs/fig_S7_worst_molecules_row.png" alt="worst molecules"><div class="cap">그림 5. 가장 많이 틀린 분자 — 왼쪽 둘(XGBoost+기술자 scaffold)은 문헌값과 일치하는 대칭 고융점 분자(모델 한계), 오른쪽 둘(GIN random)은 작은 비고리 분자(평균 풀링의 한계 + 값 오류 의심).</div></div>
+
+<h3>C. 용어</h3>
+<table>
+<tr><th style="width:22%">용어</th><th>뜻</th></tr>
+<tr><td>파라미터 / 하이퍼파라미터</td><td>학습이 정하는 값(w, 나무의 분할점, 신경망 가중치) / 학습 전에 사람이 정하는 값(λ, k, C, 나무 수, 층 수, lr)</td></tr>
+<tr><td>손실함수 / 평가지표</td><td>최적화가 줄이는 함수(MSE) / 사람이 보고하는 지표(MAE, RMSE, R²). 단위와 민감도가 다르다</td></tr>
+<tr><td>편향 / 분산</td><td>모델이 단순해서 생기는 체계적 오차 / 데이터가 달라지면 모델이 흔들려 생기는 오차. 복잡도를 올리면 편향 ↓ 분산 ↑</td></tr>
+<tr><td>과소적합 / 과적합</td><td>train·validate 모두 나쁨 / train은 좋고 validate 나쁨 <span class="badge ppt">10쪽</span></td></tr>
+<tr><td>정규화(regularization)</td><td>복잡도에 벌점을 주어 과적합을 막는 장치: L2(Ridge, MLP α), λ·γ(XGBoost), dropout(GIN), 조기 종료, 서브샘플링</td></tr>
+<tr><td>볼록(convex)</td><td>손실 곡면에 국소 최소가 하나뿐 → 어떤 방법으로 풀어도 같은 전역해(Ridge, SVR). 신경망은 비볼록</td></tr>
+<tr><td>배깅 / 부스팅</td><td>독립 모델의 평균(분산 ↓, RF) / 앞 모델의 오차를 다음 모델이 순차 보정(편향 ↓, XGBoost)</td></tr>
+<tr><td>조기 종료</td><td>validate 오차가 더 좋아지지 않으면 학습을 멈추고 최선 가중치로 복원 <span class="badge ppt">10쪽</span></td></tr>
+<tr><td>데이터 누수</td><td>test 정보가 학습에 새는 것: test로 스케일러 fit, test 보고 하이퍼파라미터 선택, 같은 분자가 양쪽에 <span class="badge ppt">14쪽</span></td></tr>
+<tr><td>scaffold split</td><td>Murcko 골격이 다른 분자만 test에 → 새 골격 일반화 능력을 잼 <span class="badge ppt">14쪽</span></td></tr>
+<tr><td>순열 불변</td><td>원자 순서를 바꿔 넣어도 출력이 같음(합·평균 풀링). 그래프 모델의 필수 성질</td></tr>
+<tr><td>1-WL</td><td>Weisfeiler–Lehman 그래프 동형 검사. sum 집계 GIN은 이 검사와 같은 구별력을 가짐 <span class="badge add">추가</span></td></tr>
+<tr><td>SHAP</td><td>예측값을 특징별 기여의 합으로 분해(Shapley 값). "모델이 무엇을 보는가"이지 인과가 아님</td></tr>
+</table>
+
+<p class="small" style="margin-top:14pt">작성 2026-11-09 · 수치 출처 <code>mp_presentation/results/</code> (run_notes.md) · 강의자료 쪽 번호는 1주차 슬라이드 기준 · <span class="badge add">추가</span> 표시 내용은 자료 밖의 일반 머신러닝 지식 또는 우리가 따로 계산·검증한 것.</p>
+
+</body>
+</html>
