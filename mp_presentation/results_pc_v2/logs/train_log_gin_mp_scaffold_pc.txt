@@ -1,0 +1,18 @@
+﻿# train.py --prop mp --split scaffold  (start 11/09/2026 15:55:35, PC mlstudy, KMP_DUPLICATE_LIB_OK=TRUE)
+C:\Users\mthog\miniforge3\envs\mlstudy\Lib\site-packages\torch\jit\_script.py:1491: FutureWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+[load_data] mp: 5,000 rows, unit = K
+[gen_dataset] 5,000 graphs, node features = 147, edge features = 16
+[split_dataset:scaffold] train 4,000 / validate 500 / test 500
+[model] mp_GNN-GIN_mean_scaffold: 147,009 parameters
+  epoch   0  train loss 0.6936  val MAE 51.898  lr 1.0e-03  *
+  epoch   1  train loss 0.4591  val MAE 49.653  lr 1.0e-03  *
+  epoch   2  train loss 0.3992  val MAE 47.395  lr 1.0e-03  *
+  epoch   5  train loss 0.3216  val MAE 45.694  lr 1.0e-03  *
+  epoch  10  train loss 0.2522  val MAE 46.890  lr 1.0e-03
+  epoch  14  train loss 0.2437  val MAE 44.651  lr 1.0e-03  *
+  epoch  20  train loss 0.2128  val MAE 51.107  lr 1.0e-03
+  epoch  30  train loss 0.1715  val MAE 46.298  lr 8.0e-04
+  epoch  40  train loss 0.1435  val MAE 45.924  lr 6.4e-04
+[test] mp_GNN-GIN_mean_scaffold: MAE 42.070 | RMSE 55.243 | R2 0.425 | baseline MAE 79.742 | 45 epochs, 125 s
+# rc=0  elapsed 00:02:22.7634999

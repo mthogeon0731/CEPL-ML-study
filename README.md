@@ -11,13 +11,15 @@ KIST CEPL 학부연구생 ML 스터디(2026-11~) — **분자 물성 예측** �
 | [`mp_presentation/slides/mp_week1_발표_슬라이드.md`](mp_presentation/slides/mp_week1_발표_슬라이드.md) | 발표 슬라이드 10장 구성·링크·예상 질문 |
 | [`mp_presentation/results/run_notes.md`](mp_presentation/results/run_notes.md) | 모든 수치의 출처·실행 환경·재현 명령 |
 
-**1주차 결과 한 줄** (표본 5,000, seed 42, test MAE K): 기준선 72.5 / 76.0 (random / scaffold) → 최저 **XGBoost + RDKit 기술자 30.0 / 37.8**; GIN(`train.py`, 80/10/10) 36.5 — 같은 test 500개에서 XGBoost+기술자 32.7 vs GIN 36.5 (3위, 지문 모델 6종은 모두 이김).
+**1주차 결과 한 줄** (표본 5,000, seed 42, test MAE K, **PC `mlstudy` 실행 = 발표 채택 수치**): 기준선 72.5 / 76.0 (random / scaffold) → 최저 **XGBoost + RDKit 기술자 29.5 / 37.4**; GIN(`train.py`, 80/10/10) 36.0 — 같은 test 500개에서 XGBoost+기술자 33.6 vs GIN 36.0 (3위; 차이 2.4 K는 부트스트랩 95 % CI [0.0, 4.7]로 경계선, scaffold에서는 36.5 vs 42.1로 5.6 K 뒤짐; 지문 모델 6종은 모두 이김).
+
+**수치 두 벌**: `mp_presentation/results/`(Claude 컨테이너 실행, 11-09 오전)와 `mp_presentation/results_pc_v2/`(PC `mlstudy` 재현, 11-09 오후). 결정적 모델은 동일, XGBoost·RF ≤ 0.9 K, GIN은 epoch 수가 다름(145 → 79, MAE 0.5 K). **발표(덱·`slides/figs_pc/`·`05_analysis_xai_pc/`)는 PC판 기준** — `04_performance/results_table.md` ★ 절, `results/run_notes.md` PC 재현 절, 비교표 `results_pc_v2/compare_container_vs_pc.csv`.
 
 > 저장소에 **없는 것**: 강의 슬라이드 PDF(`261105_1주차_물성예측_슬라이드.pdf`), `Context/`의 참고문헌 PDF, 실습 zip — 저작권·용량 때문에 제외(`.gitignore`). `261105_Week1_Practice/`의 코드·데이터는 교수님 실습 자료이며 `data/README_data.md`의 원 출처를 인용할 것.
 
 ---
 
-## 작업 폴더 지도 (로컬 `CEPL ML/` 기준)
+## 작업 폴더 지도 (로컬 `C:\Users\mthog\CEPL ML\` 기준 — 2026-11-09부터; 이전 OneDrive 바탕 화면 폴더는 사본)
 
 - 스터디 자료: `261105_1주차_물성예측_슬라이드.pdf` (50쪽, 최재형, CEPL, 2026.11)
 - 팀 물성: **mp (녹는점)** — 19,945개, K, 어려움(잡음 큼) (48쪽)
@@ -39,10 +41,12 @@ CEPL ML/
    ├─ 02_preprocessing/              정제·표현·분할 — 어떻게 했나, 어떤 표현자(feature)
    ├─ 03_modeling/                   모델 — 왜 썼나, 어떤 특징 (6종 + GIN), 코드 4파일 요약
    ├─ 04_performance/                평가 — MAE 표, parity·학습곡선, 과소·과적합 진단
-   ├─ 05_analysis_xai/               후분석(틀린 분자·골격·구간별 오차) + XAI(SHAP)
-   ├─ results/                       노트북·train.py 산출물 원본 (표·그림·예측 CSV)
-   ├─ scripts/                       [추가] 데이터 카드 / 오차 분석 / SHAP 스크립트
-   └─ slides/                        5분 발표 파일 + 7장 구성안
+   ├─ 05_analysis_xai/               후분석(틀린 분자·골격·구간별 오차) + XAI(SHAP) — 컨테이너 예측 기준
+   ├─ 05_analysis_xai_pc/            후분석 — PC 예측 기준 (발표 채택)
+   ├─ results/                       컨테이너 실행 산출물 원본 (표·그림·예측 CSV, run_notes.md)
+   ├─ results_pc_v2/                 PC mlstudy 재현 산출물 (노트북·train.py·같은-분할 비교·부트스트랩·로그)
+   ├─ scripts/                       [추가] 데이터 카드 / 오차 분석 / SHAP / 같은-분할 비교 / 슬라이드 그림 스크립트
+   └─ slides/                        10장 구성·예상 질문 (mp_week1_발표_슬라이드.md), figs/ 컨테이너판 · figs_pc/ PC판 그림
 ```
 
 ## 발표 흐름 ↔ 폴더 ↔ 슬라이드 (11쪽)
@@ -60,7 +64,7 @@ CEPL ML/
 2. **실습 폴더** — 교수님 `261105_Week1_Practice.zip`을 `261105_Week1_Practice/`에 풀기 → 그 안에서 `python feature.py` (44쪽 기대 출력)
 3. **참고자료** — Chrome 다운로드 폴더의 `p40-*`, `p41-*` PDF를 `Context/`로 이동 (`Context/README.md` 첫 절)
 4. **과제** (49쪽 4단계, 팀 물성 mp) — 노트북 `PROP = 'mp'` 결과표 → `python train.py --prop mp` 그림 2장 → 코드 4파일 한 줄 → 산출물은 `mp_presentation/results/`
-5. **발표 준비** — `mp_presentation/01…05` README의 질문에 답 채우기 → `slides/` 7장 → 5분 리허설
+5. **발표 준비** — `mp_presentation/01…05` README의 질문에 답 채우기 → 덱 10장(Claude 슬라이드, `slides/mp_week1_발표_슬라이드.md`) → 5분 리허설
 
 ## 원칙 (슬라이드에서)
 

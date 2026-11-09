@@ -8,7 +8,7 @@
 #    5. register Jupyter kernel, run check_env.py                    [slides 44, 46]
 #
 #  How to run (PowerShell, normal user, no admin needed):
-#    cd "C:\Users\mthog\OneDrive\바탕 화면\CEPL ML\env"
+#    cd "C:\Users\mthog\CEPL ML\env"
 #    Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force
 #    .\setup_all.ps1
 #

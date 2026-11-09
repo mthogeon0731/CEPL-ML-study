@@ -52,7 +52,10 @@ SMILES 수집 → 정제 → 표현 → 분할 → 모델 → 평가        (11�
 
 ## 체크리스트 (발표 전)
 
-- [ ] `env/` 설치 완료, `python feature.py` 출력 확인 (44쪽)
+- [x] `env/` 설치 완료, `python feature.py` 출력 확인 (44쪽) — 2026-11-09 `mlstudy`에서 `piperidine  x: (6, 147)  edge_index: (2, 12)  edge_attr: (12, 16)` ✔
+- [x] **PC `mlstudy` 재현 (v2)** — 노트북·`train.py`(random, scaffold)·같은-분할 비교 전부 재실행 → `results_pc_v2/` (원본 미덮어쓰기). 결론 동일, 수치 차이 ≤ 0.9 K; 단 random에서 GIN−XGB 차이의 CI 하한이 0에 닿음. ⚠ `train.py` 그림 저장 시 OpenMP 충돌 → `set KMP_DUPLICATE_LIB_OK=TRUE` (`results/run_notes.md` PC 재현 절, `env/00_설치안내.md` ⑥)
+- [x] 발표에 쓸 수치 = **PC판(v2)** 으로 결정 (2026-11-09 밤) → 덱 5·6·7·8·9·10장 수치·그림 교체 완료, `04_performance/results_table.md` ★ 절(PC 표 1·2), `slides/figs_pc/`, `05_analysis_xai_pc/`, `scripts/make_slide_figs_pc.py`
+- [ ] 덱(claude.ai 아티팩트)에서 7–9장을 백업으로 끝에 옮기기, 10장 결론 문장 보정 (`slides/mp_week1_발표_슬라이드.md`)
 - [x] 실습 zip을 `261105_Week1_Practice/`에 풀었음 (2026-11-06) — `data/README_data.md`의 mp 항목은 `261105_Week1_Practice/README.md`에 요약
 - [x] 과제 1: 노트북 `PROP = 'mp'` → 결과표 → `results/` (2026-11-09, `results/results_mp.csv`·`mae_table_mp.csv`; 실행된 노트북 `261105_Week1_Practice/01_multi_model_comparison_mp_executed.ipynb`)
 - [x] 과제 2: `python train.py --prop mp` → parity·학습곡선 → `results/` (2026-11-09, test MAE 36.5 K; `--split scaffold`도 [추가] 실행 41.8 K)

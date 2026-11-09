@@ -1,0 +1,9 @@
+﻿# -m jupyter nbconvert --to notebook --execute --ExecutePreprocessor.timeout=-1 --ExecutePreprocessor.kernel_name=python3 01_multi_model_comparison_mp.ipynb --output 01_multi_model_comparison_mp_executed_pc.ipynb  (start 11/09/2026 16:56:55, PC mlstudy; sandbox shims: TEMP, joblib sequential, KMP_DUPLICATE_LIB_OK)
+WARNING: Insecure writes have been enabled via environment variable 'JUPYTER_ALLOW_INSECURE_WRITES'! If this is not intended, remove the variable or set its value to 'False'.
+[NbConvertApp] Converting notebook 01_multi_model_comparison_mp.ipynb to notebook
+Cell is missing an id field, this will become a hard error in future nbformat versions. You may want to use `normalize()` on your notebooks before validations (available since nbformat 5.1.4). Previous versions of nbformat are fixing this issue transparently, and will stop doing so in the future.
+WARNING: Insecure writes have been enabled via environment variable 'JUPYTER_ALLOW_INSECURE_WRITES'! If this is not intended, remove the variable or set its value to 'False'.
+Proactor event loop does not implement add_reader family of methods required for zmq. Registering an additional selector thread for add_reader support via tornado. Use `asyncio.set_event_loop_policy(WindowsSelectorEventLoopPolicy())` to avoid this warning.
+[IPKernelApp] WARNING | Kernel is running over TCP without encryption. All communication (including code and outputs) is sent in plain text and is susceptible to eavesdropping. Use IPC transport or launch with kernel manager-provisioned CurveZMQ keys to enable transport encryption.
+[NbConvertApp] Writing 110642 bytes to 01_multi_model_comparison_mp_executed_pc.ipynb
+# rc=0  elapsed 00:22:55.3943334

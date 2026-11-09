@@ -2,7 +2,9 @@
 
 - 파일: `261105_Week1_Practice/data/mp.csv`  (열: smiles, value, unit, source)
 - SMILES 열 `smiles`, 목표값 열 `value`
-- 출처 · 측정 조건: **(data/README_data.md를 보고 채우기)**  ← 13쪽: 측정법, 온도, 순도, 분해 여부
+- 출처: Bradley, J.-C., Williams, A. & Lang, A. *Jean-Claude Bradley Open Melting Point Dataset*, figshare (2014) (`data/README_data.md` 참고문헌 [4]). `source` 열은 모두 `Bradley_ONS_MP` — 세부 출처(PHYSPROP, Alfa Aesar 등)는 원본 열에만 있음
+- DB 정제 (README_data 표): 원본 27,976행 → NaN 0, 무효 SMILES 0, **중복 8,031행을 중앙값으로 병합**, `donotuse` 표시 행 제거(원본 pkl에서 이미 0건) → 19,945. 단위 **K** (원 출처 °C에 +273.15), log 변환 없음
+- 측정 조건 (13쪽: 측정법, 온도, 순도, 분해 여부): **데이터 파일에 기록 없음** — 측정법(모세관/DSC)·순도·분해 여부 열이 없어 분리 불가. 대신 잡음 크기로 간접 확인: 반복 측정이 있는 4,679종 중 **410종은 값 차이 ≥ 10 K, 86종은 ≥ 50 K** (README_data) → 이 산포가 어떤 모델에도 남는 오차 하한
 
 ## 정제 로그 (12쪽)
 

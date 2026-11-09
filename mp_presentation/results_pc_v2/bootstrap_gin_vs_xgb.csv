@@ -1,0 +1,5 @@
+run,split,n_test,GIN_MAE,XGB_desc_MAE,diff_mean,ci_lo,ci_hi
+container,random,500,36.52,32.714,3.806,1.26,6.483
+container,scaffold,500,41.806,36.376,5.43,2.843,7.9
+pc,random,500,35.973,33.583,2.391,0.01,4.67
+pc,scaffold,500,42.07,36.463,5.607,2.939,8.128

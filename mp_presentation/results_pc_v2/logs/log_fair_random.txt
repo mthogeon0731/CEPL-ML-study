@@ -1,0 +1,35 @@
+﻿# fair_compare.py . results_fc random  (start 11/09/2026 16:42:07, PC mlstudy; sandbox shims: TEMP, joblib sequential, KMP_DUPLICATE_LIB_OK)
+C:\Users\mthog\miniforge3\envs\mlstudy\Lib\site-packages\torch\jit\_script.py:1491: FutureWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+[load_data] mp: 5,000 rows, unit = K
+split reproduced: train 4000 / validate 500 / test 500
+train mean [K] 377.8165062499999
+features (5000, 217) (5000, 2048) (160 s)
+Descriptor Ridge        MAE=38.466
+Descriptor kNN          MAE=42.139
+Descriptor SVR          MAE=38.636
+Descriptor RandomForest MAE=35.729
+Descriptor XGBoost      MAE=33.583
+Descriptor MLP          MAE=37.144
+MorganFP   Ridge        MAE=60.232
+MorganFP   kNN          MAE=90.993
+MorganFP   SVR          MAE=55.761
+MorganFP   RandomForest MAE=42.206
+MorganFP   XGBoost      MAE=40.543
+MorganFP   MLP          MAE=68.396
+       feature                model    MAE    RMSE     R2     sec
+             - baseline(train mean) 75.151     NaN    NaN   0.000
+    Descriptor                Ridge 38.466  51.105  0.709   0.163
+    Descriptor                  kNN 42.139  55.064  0.662   0.867
+    Descriptor                  SVR 38.636  52.862  0.688  16.903
+    Descriptor         RandomForest 35.729  47.572  0.748 166.679
+    Descriptor              XGBoost 33.583  45.002  0.774   7.732
+    Descriptor                  MLP 37.144  51.665  0.702  24.575
+      MorganFP                Ridge 60.232  78.696  0.309   1.006
+      MorganFP                  kNN 90.993 115.036 -0.476   0.531
+      MorganFP                  SVR 55.761  73.124  0.404  66.504
+      MorganFP         RandomForest 42.206  55.340  0.658 315.493
+      MorganFP              XGBoost 40.543  53.193  0.684   8.773
+      MorganFP                  MLP 68.396  89.624  0.104  52.437
+Graph (147/16)       GIN (train.py) 35.973  49.212  0.730     NaN
+# rc=0  elapsed 00:14:48.7071315

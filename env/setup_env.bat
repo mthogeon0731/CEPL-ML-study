@@ -4,7 +4,7 @@ REM ============================================================================
 REM  setup_env.bat  -  create the "mlstudy" conda environment (slides p.43)
 REM
 REM  Run from:  Start menu > "Miniforge Prompt"  (conda must be on PATH there)
-REM      cd /d "C:\Users\mthog\OneDrive\바탕 화면\CEPL ML\env"
+REM      cd /d "C:\Users\mthog\CEPL ML\env"
 REM      setup_env.bat
 REM
 REM  Steps = the 4 lines on slide 43 + Jupyter kernel registration (slide 46,

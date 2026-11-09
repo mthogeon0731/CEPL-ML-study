@@ -36,7 +36,7 @@
 
 ```
 conda activate mlstudy
-cd "C:\Users\mthog\OneDrive\바탕 화면\CEPL ML\mp_presentation"
+cd "C:\Users\mthog\CEPL ML\mp_presentation"
 python scripts\mp_data_card.py "..\261105_Week1_Practice\data\mp.csv" --out 01_data
 ```
 

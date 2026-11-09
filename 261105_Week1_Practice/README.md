@@ -38,7 +38,7 @@
 
 ```
 conda activate mlstudy
-cd "C:\Users\mthog\OneDrive\바탕 화면\CEPL ML\261105_Week1_Practice"
+cd "C:\Users\mthog\CEPL ML\261105_Week1_Practice"
 python -c "import rdkit, sklearn, xgboost; print('ok')"
 python feature.py            # piperidine  x: (6, 147)  edge_index: (2, 12)  edge_attr: (12, 16)
 jupyter notebook             # → 01_multi_model_comparison.ipynb, 첫 셀 PROP = 'mp'

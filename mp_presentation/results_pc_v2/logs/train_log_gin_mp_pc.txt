@@ -1,0 +1,29 @@
+﻿# train.py --prop mp  (start 11/09/2026 15:50:11, PC mlstudy, KMP_DUPLICATE_LIB_OK=TRUE)
+C:\Users\mthog\miniforge3\envs\mlstudy\Lib\site-packages\torch\jit\_script.py:1491: FutureWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+[load_data] mp: 5,000 rows, unit = K
+[gen_dataset] 5,000 graphs, node features = 147, edge features = 16
+[split_dataset:random] train 4,000 / validate 500 / test 500
+[model] mp_GNN-GIN_mean_random: 147,009 parameters
+  epoch   0  train loss 0.6716  val MAE 54.002  lr 1.0e-03  *
+  epoch   1  train loss 0.4757  val MAE 48.317  lr 1.0e-03  *
+  epoch   2  train loss 0.4139  val MAE 41.597  lr 1.0e-03  *
+  epoch   7  train loss 0.3317  val MAE 39.181  lr 1.0e-03  *
+  epoch   8  train loss 0.3065  val MAE 37.633  lr 1.0e-03  *
+  epoch  10  train loss 0.3221  val MAE 40.970  lr 1.0e-03
+  epoch  13  train loss 0.2784  val MAE 37.128  lr 1.0e-03  *
+  epoch  15  train loss 0.2666  val MAE 36.934  lr 1.0e-03  *
+  epoch  18  train loss 0.2478  val MAE 35.689  lr 1.0e-03  *
+  epoch  20  train loss 0.2456  val MAE 36.406  lr 1.0e-03
+  epoch  24  train loss 0.2448  val MAE 35.423  lr 1.0e-03  *
+  epoch  30  train loss 0.2032  val MAE 36.292  lr 1.0e-03
+  epoch  31  train loss 0.1970  val MAE 35.353  lr 1.0e-03  *
+  epoch  36  train loss 0.1929  val MAE 35.009  lr 1.0e-03  *
+  epoch  37  train loss 0.1858  val MAE 34.819  lr 1.0e-03  *
+  epoch  40  train loss 0.1718  val MAE 35.094  lr 1.0e-03
+  epoch  48  train loss 0.1639  val MAE 34.461  lr 1.0e-03  *
+  epoch  50  train loss 0.1672  val MAE 35.515  lr 1.0e-03
+  epoch  60  train loss 0.1473  val MAE 36.716  lr 8.0e-04
+  epoch  70  train loss 0.1339  val MAE 34.710  lr 6.4e-04
+[test] mp_GNN-GIN_mean_random: MAE 35.973 | RMSE 49.212 | R2 0.730 | baseline MAE 75.151 | 79 epochs, 289 s
+# rc=0  elapsed 00:05:24.0409512

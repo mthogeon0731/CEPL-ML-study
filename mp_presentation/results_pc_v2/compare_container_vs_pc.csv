@@ -1,0 +1,53 @@
+﻿source,split,feature,model,MAE_container,MAE_pc,diff_pc_minus_container
+notebook 80/20,random,Descriptor,Ridge,35.371,35.371,-0.0
+notebook 80/20,random,Descriptor,kNN,38.48,38.487,0.006
+notebook 80/20,random,Descriptor,SVR,35.437,35.437,-0.0
+notebook 80/20,random,Descriptor,RandomForest,33.528,33.554,0.026
+notebook 80/20,random,Descriptor,XGBoost,29.966,29.472,-0.494
+notebook 80/20,random,Descriptor,MLP,34.397,34.397,0.0
+notebook 80/20,random,MorganFP,Ridge,61.011,61.011,0.0
+notebook 80/20,random,MorganFP,kNN,86.223,86.297,0.073
+notebook 80/20,random,MorganFP,SVR,54.807,54.807,0.0
+notebook 80/20,random,MorganFP,RandomForest,40.94,40.97,0.03
+notebook 80/20,random,MorganFP,XGBoost,39.524,39.224,-0.301
+notebook 80/20,random,MorganFP,MLP,67.019,67.019,-0.0
+notebook 80/20,scaffold,Descriptor,Ridge,45.085,45.085,0.0
+notebook 80/20,scaffold,Descriptor,kNN,51.685,51.685,-0.0
+notebook 80/20,scaffold,Descriptor,SVR,43.975,43.975,-0.0
+notebook 80/20,scaffold,Descriptor,RandomForest,40.687,40.666,-0.021
+notebook 80/20,scaffold,Descriptor,XGBoost,37.769,37.389,-0.38
+notebook 80/20,scaffold,Descriptor,MLP,53.579,53.579,0.0
+notebook 80/20,scaffold,MorganFP,Ridge,96.204,96.204,-0.0
+notebook 80/20,scaffold,MorganFP,kNN,125.909,125.849,-0.06
+notebook 80/20,scaffold,MorganFP,SVR,55.517,55.517,0.0
+notebook 80/20,scaffold,MorganFP,RandomForest,55.495,55.417,-0.078
+notebook 80/20,scaffold,MorganFP,XGBoost,50.266,50.44,0.174
+notebook 80/20,scaffold,MorganFP,MLP,143.124,143.124,-0.0
+train.py 80/10/10 (same test 500),random,-,baseline(train mean),75.151,75.151,0.0
+train.py 80/10/10 (same test 500),random,Descriptor,Ridge,38.466,38.466,-0.0
+train.py 80/10/10 (same test 500),random,Descriptor,kNN,42.139,42.139,0.0
+train.py 80/10/10 (same test 500),random,Descriptor,SVR,38.636,38.636,-0.0
+train.py 80/10/10 (same test 500),random,Descriptor,RandomForest,35.697,35.729,0.031
+train.py 80/10/10 (same test 500),random,Descriptor,XGBoost,32.714,33.583,0.869
+train.py 80/10/10 (same test 500),random,Descriptor,MLP,37.099,37.144,0.046
+train.py 80/10/10 (same test 500),random,MorganFP,Ridge,60.232,60.232,-0.0
+train.py 80/10/10 (same test 500),random,MorganFP,kNN,91.797,90.993,-0.804
+train.py 80/10/10 (same test 500),random,MorganFP,SVR,55.761,55.761,0.0
+train.py 80/10/10 (same test 500),random,MorganFP,RandomForest,42.161,42.206,0.045
+train.py 80/10/10 (same test 500),random,MorganFP,XGBoost,41.009,40.543,-0.466
+train.py 80/10/10 (same test 500),random,MorganFP,MLP,68.396,68.396,0.0
+train.py 80/10/10 (same test 500),random,Graph (147/16),GIN (train.py),36.52,35.973,-0.547
+train.py 80/10/10 (same test 500),scaffold,-,baseline(train mean),79.742,79.742,0.0
+train.py 80/10/10 (same test 500),scaffold,Descriptor,Ridge,44.167,44.167,0.0
+train.py 80/10/10 (same test 500),scaffold,Descriptor,kNN,51.358,51.338,-0.02
+train.py 80/10/10 (same test 500),scaffold,Descriptor,SVR,43.331,43.331,0.0
+train.py 80/10/10 (same test 500),scaffold,Descriptor,RandomForest,40.496,40.502,0.006
+train.py 80/10/10 (same test 500),scaffold,Descriptor,XGBoost,36.376,36.463,0.087
+train.py 80/10/10 (same test 500),scaffold,Descriptor,MLP,48.338,48.338,-0.0
+train.py 80/10/10 (same test 500),scaffold,MorganFP,Ridge,99.121,99.121,-0.0
+train.py 80/10/10 (same test 500),scaffold,MorganFP,kNN,132.343,132.23,-0.112
+train.py 80/10/10 (same test 500),scaffold,MorganFP,SVR,55.34,55.34,-0.0
+train.py 80/10/10 (same test 500),scaffold,MorganFP,RandomForest,51.985,52.244,0.259
+train.py 80/10/10 (same test 500),scaffold,MorganFP,XGBoost,48.065,47.521,-0.545
+train.py 80/10/10 (same test 500),scaffold,MorganFP,MLP,149.02,149.02,0.0
+train.py 80/10/10 (same test 500),scaffold,Graph (147/16),GIN (train.py),41.806,42.07,0.264

@@ -71,7 +71,7 @@ pd.DataFrame({'smiles': df['smiles'].values[te], 'y_true': yt, 'y_pred': yp, 'tr
 ## ④ 작업 순서
 
 ```
-cd "C:\Users\mthog\OneDrive\바탕 화면\CEPL ML\mp_presentation"
+cd "C:\Users\mthog\CEPL ML\mp_presentation"
 python scripts\error_analysis.py "..\261105_Week1_Practice\results\mp_GNN-GIN_mean_random_test_pred.csv" --out 05_analysis_xai\gin_random --top 20
 python scripts\shap_descriptors.py "..\261105_Week1_Practice\data\mp.csv" --out 05_analysis_xai\xgb_scaffold --split scaffold
 python scripts\error_analysis.py 05_analysis_xai\xgb_scaffold\pred_test_xgb_scaffold.csv --out 05_analysis_xai\xgb_scaffold --top 20
