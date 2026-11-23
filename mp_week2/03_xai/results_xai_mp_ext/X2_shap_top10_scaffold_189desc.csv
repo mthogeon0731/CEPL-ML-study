@@ -1,0 +1,11 @@
+,descriptor,mean_abs_SHAP_K,corr_value_SHAP,direction
+1,TPSA,18.882,0.757,값↑ → mp↑
+2,BertzCT,17.558,0.774,값↑ → mp↑
+3,RingCount,14.977,0.895,값↑ → mp↑
+4,NumHDonors,10.2,0.773,값↑ → mp↑
+5,NumRotatableBonds,7.613,-0.839,값↑ → mp↓
+6,FractionCSP3,7.021,-0.834,값↑ → mp↓
+7,fr_bicyclic,3.931,0.828,값↑ → mp↑
+8,NHOHCount,3.816,0.786,값↑ → mp↑
+9,VSA_EState3,3.662,0.602,값↑ → mp↑
+10,VSA_EState4,3.153,0.759,값↑ → mp↑

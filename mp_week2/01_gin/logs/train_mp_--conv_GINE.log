@@ -1,0 +1,26 @@
+[load_data] mp: 5,000 rows, unit = K
+[gen_dataset] 5,000 graphs, node features = 147, edge features = 16
+[split_dataset:random] train 4,000 / validate 500 / test 500
+[model] mp_GNN-GINE_mean_random: 170,564 parameters
+  epoch   0  train loss 0.7157  val MAE 57.171  lr 1.0e-03  *
+  epoch   1  train loss 0.5336  val MAE 51.049  lr 1.0e-03  *
+  epoch   2  train loss 0.4864  val MAE 47.125  lr 1.0e-03  *
+  epoch   4  train loss 0.4207  val MAE 43.868  lr 1.0e-03  *
+  epoch  10  train loss 0.3338  val MAE 47.107  lr 1.0e-03
+  epoch  12  train loss 0.3378  val MAE 39.559  lr 1.0e-03  *
+  epoch  17  train loss 0.2772  val MAE 36.692  lr 1.0e-03  *
+  epoch  20  train loss 0.2822  val MAE 37.370  lr 1.0e-03
+  epoch  23  train loss 0.2595  val MAE 36.087  lr 1.0e-03  *
+  epoch  28  train loss 0.2534  val MAE 35.506  lr 1.0e-03  *
+  epoch  30  train loss 0.2344  val MAE 37.253  lr 1.0e-03
+  epoch  40  train loss 0.2105  val MAE 34.865  lr 8.0e-04  *
+  epoch  44  train loss 0.2000  val MAE 34.841  lr 8.0e-04  *
+  epoch  50  train loss 0.1957  val MAE 35.774  lr 8.0e-04
+  epoch  56  train loss 0.1876  val MAE 34.806  lr 6.4e-04  *
+  epoch  60  train loss 0.1746  val MAE 34.787  lr 6.4e-04  *
+  epoch  63  train loss 0.1673  val MAE 34.556  lr 6.4e-04  *
+  epoch  67  train loss 0.1663  val MAE 34.215  lr 6.4e-04  *
+  epoch  70  train loss 0.1638  val MAE 35.067  lr 6.4e-04
+  epoch  80  train loss 0.1493  val MAE 34.822  lr 5.1e-04
+  epoch  90  train loss 0.1391  val MAE 34.484  lr 4.1e-04
+[test] mp_GNN-GINE_mean_random: MAE 36.645 | RMSE 49.202 | R2 0.730 | baseline MAE 75.151 | 98 epochs, 179 s

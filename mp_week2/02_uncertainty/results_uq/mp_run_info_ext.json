@@ -1,0 +1,21 @@
+{
+ "prop": "mp",
+ "max_n": 5000,
+ "seed": 42,
+ "sec": {
+  "data": 8.4,
+  "RF": 104.9,
+  "GP": 41.0,
+  "BGNN": 97.2,
+  "AD": 137.2,
+  "AL": 549.5,
+  "BGNN_scaffold": 56.3,
+  "recal": 257.3
+ },
+ "bgnn_epochs_random": 83,
+ "bgnn_epochs_scaffold": 44,
+ "gp_kernel_random": "0.754**2 * Tanimoto() + WhiteKernel(noise_level=0.0659)",
+ "gp_kernel_scaffold": "0.73**2 * Tanimoto() + WhiteKernel(noise_level=0.0581)",
+ "gp_noise_sd_random": 23.428963371387383,
+ "gp_noise_sd_scaffold": 22.323824301052813
+}

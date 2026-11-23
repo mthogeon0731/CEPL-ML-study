@@ -1,0 +1,8 @@
+method,frac_above_median,frac_positive,n_mol
+GNNExplainer,0.679,1.0,105
+IG,0.744,0.933,105
+Joback,0.981,1.0,89
+grad_x_input,0.706,0.781,105
+random,0.533,0.545,105
+readout,0.708,0.929,105
+saliency,0.51,1.0,105

@@ -1,0 +1,13 @@
+model,method,signed_mean,signed_sd,abs_mean,abs_sd,n_mol
+trained,GNNExplainer,0.499,0.288,0.486,0.287,166
+trained,IG,0.612,0.236,0.515,0.256,166
+trained,element_rule,-0.546,0.202,,,147
+trained,grad_x_input,0.558,0.296,0.273,0.349,166
+trained,group_contrib_Ridge,0.595,0.243,0.484,0.315,166
+trained,random,-0.025,0.294,0.015,0.294,166
+trained,readout,0.423,0.352,0.213,0.429,166
+trained,saliency,0.265,0.406,0.241,0.405,166
+untrained,IG,0.249,0.403,0.348,0.39,166
+untrained,grad_x_input,0.23,0.37,0.328,0.359,166
+untrained,readout,0.229,0.382,0.135,0.386,166
+untrained,saliency,0.174,0.396,0.154,0.394,166

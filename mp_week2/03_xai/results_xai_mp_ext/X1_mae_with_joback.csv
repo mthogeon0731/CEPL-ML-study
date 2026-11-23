@@ -1,0 +1,9 @@
+,test MAE [K] (전체 test),test MAE [K] (Joback 덮인 420개)
+평균값 (train 평균),75.2,75.6
+Joback Tm (피팅 없음),,108.1
+Ridge + 기술자,39.4,39.5
+XGBoost + 기술자,33.1,32.6
+XGBoost + Morgan,41.0,39.7
+GIN sum (seed 42),38.0,38.4
+원자 가산 Ridge (e절),44.7,45.4
+결정나무 깊이 3,49.1,50.7

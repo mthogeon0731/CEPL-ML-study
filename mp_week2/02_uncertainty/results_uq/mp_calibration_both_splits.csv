@@ -1,0 +1,7 @@
+,model,MAE,mean_sd,coverage_2sd,spearman
+random,RF,42.248,48.948,0.902,0.218
+random,BGNN-GIN,36.115,28.426,0.766,0.092
+random,GP,38.068,50.061,0.946,0.212
+scaffold,RF,52.245,58.485,0.886,0.053
+scaffold,BGNN-GIN,41.53,14.189,0.42,0.088
+scaffold,GP,46.276,54.15,0.924,0.042

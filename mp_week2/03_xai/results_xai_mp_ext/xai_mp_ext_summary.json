@@ -1,0 +1,394 @@
+{
+ "joback": {
+  "coverage": {
+   "train": 0.8255,
+   "validate": 0.832,
+   "test": 0.84
+  },
+  "test_MAE_covered": 108.1439301481701,
+  "test_bias_covered": 89.62212254260835,
+  "n_test_covered": 420,
+  "sec": 1.3
+ },
+ "mae_table": [
+  {
+   "index": "평균값 (train 평균)",
+   "test MAE [K] (전체 test)": 75.2,
+   "test MAE [K] (Joback 덮인 420개)": 75.6
+  },
+  {
+   "index": "Joback Tm (피팅 없음)",
+   "test MAE [K] (전체 test)": NaN,
+   "test MAE [K] (Joback 덮인 420개)": 108.1
+  },
+  {
+   "index": "Ridge + 기술자",
+   "test MAE [K] (전체 test)": 39.4,
+   "test MAE [K] (Joback 덮인 420개)": 39.5
+  },
+  {
+   "index": "XGBoost + 기술자",
+   "test MAE [K] (전체 test)": 33.1,
+   "test MAE [K] (Joback 덮인 420개)": 32.6
+  },
+  {
+   "index": "XGBoost + Morgan",
+   "test MAE [K] (전체 test)": 41.0,
+   "test MAE [K] (Joback 덮인 420개)": 39.7
+  },
+  {
+   "index": "GIN sum (seed 42)",
+   "test MAE [K] (전체 test)": 38.0,
+   "test MAE [K] (Joback 덮인 420개)": 38.4
+  },
+  {
+   "index": "원자 가산 Ridge (e절)",
+   "test MAE [K] (전체 test)": 44.7,
+   "test MAE [K] (Joback 덮인 420개)": 45.4
+  },
+  {
+   "index": "결정나무 깊이 3",
+   "test MAE [K] (전체 test)": 49.1,
+   "test MAE [K] (Joback 덮인 420개)": 50.7
+  }
+ ],
+ "xgb_desc_scaffold_MAE": 36.66047286987305,
+ "xgb_desc217_random_MAE": 32.63589096069336,
+ "shap_top10": {
+  "random 189": [
+   "TPSA",
+   "BertzCT",
+   "RingCount",
+   "NumHDonors",
+   "NumRotatableBonds",
+   "FractionCSP3",
+   "NHOHCount",
+   "FpDensityMorgan3",
+   "fr_bicyclic",
+   "VSA_EState4"
+  ],
+  "scaffold 189": [
+   "TPSA",
+   "BertzCT",
+   "RingCount",
+   "NumHDonors",
+   "NumRotatableBonds",
+   "FractionCSP3",
+   "fr_bicyclic",
+   "NHOHCount",
+   "VSA_EState3",
+   "VSA_EState4"
+  ],
+  "random 217": [
+   "BertzCT",
+   "TPSA",
+   "NumHDonors",
+   "RingCount",
+   "NumRotatableBonds",
+   "NHOHCount",
+   "NOCount",
+   "FractionCSP3",
+   "SlogP_VSA1",
+   "VSA_EState3"
+  ]
+ },
+ "shap_top10_overlap": {
+  "random189_vs_scaffold189": 9,
+  "random189_vs_random217": 7
+ },
+ "joback_eval": {
+  "n_pool": 200,
+  "n_covered": 166,
+  "sec": 33.7,
+  "table": [
+   {
+    "model": "trained",
+    "method": "GNNExplainer",
+    "signed_mean": 0.499,
+    "signed_sd": 0.288,
+    "abs_mean": 0.486,
+    "abs_sd": 0.287,
+    "n_mol": 166
+   },
+   {
+    "model": "trained",
+    "method": "IG",
+    "signed_mean": 0.612,
+    "signed_sd": 0.236,
+    "abs_mean": 0.515,
+    "abs_sd": 0.256,
+    "n_mol": 166
+   },
+   {
+    "model": "trained",
+    "method": "element_rule",
+    "signed_mean": -0.546,
+    "signed_sd": 0.202,
+    "abs_mean": NaN,
+    "abs_sd": NaN,
+    "n_mol": 147
+   },
+   {
+    "model": "trained",
+    "method": "grad_x_input",
+    "signed_mean": 0.558,
+    "signed_sd": 0.296,
+    "abs_mean": 0.273,
+    "abs_sd": 0.349,
+    "n_mol": 166
+   },
+   {
+    "model": "trained",
+    "method": "group_contrib_Ridge",
+    "signed_mean": 0.595,
+    "signed_sd": 0.243,
+    "abs_mean": 0.484,
+    "abs_sd": 0.315,
+    "n_mol": 166
+   },
+   {
+    "model": "trained",
+    "method": "random",
+    "signed_mean": -0.025,
+    "signed_sd": 0.294,
+    "abs_mean": 0.015,
+    "abs_sd": 0.294,
+    "n_mol": 166
+   },
+   {
+    "model": "trained",
+    "method": "readout",
+    "signed_mean": 0.423,
+    "signed_sd": 0.352,
+    "abs_mean": 0.213,
+    "abs_sd": 0.429,
+    "n_mol": 166
+   },
+   {
+    "model": "trained",
+    "method": "saliency",
+    "signed_mean": 0.265,
+    "signed_sd": 0.406,
+    "abs_mean": 0.241,
+    "abs_sd": 0.405,
+    "n_mol": 166
+   },
+   {
+    "model": "untrained",
+    "method": "IG",
+    "signed_mean": 0.249,
+    "signed_sd": 0.403,
+    "abs_mean": 0.348,
+    "abs_sd": 0.39,
+    "n_mol": 166
+   },
+   {
+    "model": "untrained",
+    "method": "grad_x_input",
+    "signed_mean": 0.23,
+    "signed_sd": 0.37,
+    "abs_mean": 0.328,
+    "abs_sd": 0.359,
+    "n_mol": 166
+   },
+   {
+    "model": "untrained",
+    "method": "readout",
+    "signed_mean": 0.229,
+    "signed_sd": 0.382,
+    "abs_mean": 0.135,
+    "abs_sd": 0.386,
+    "n_mol": 166
+   },
+   {
+    "model": "untrained",
+    "method": "saliency",
+    "signed_mean": 0.174,
+    "signed_sd": 0.396,
+    "abs_mean": 0.154,
+    "abs_sd": 0.394,
+    "n_mol": 166
+   }
+  ]
+ },
+ "hbd_check": [
+  {
+   "method": "GNNExplainer",
+   "frac_above_median": 0.679,
+   "frac_positive": 1.0,
+   "n_mol": 105
+  },
+  {
+   "method": "IG",
+   "frac_above_median": 0.744,
+   "frac_positive": 0.933,
+   "n_mol": 105
+  },
+  {
+   "method": "Joback",
+   "frac_above_median": 0.981,
+   "frac_positive": 1.0,
+   "n_mol": 89
+  },
+  {
+   "method": "grad_x_input",
+   "frac_above_median": 0.706,
+   "frac_positive": 0.781,
+   "n_mol": 105
+  },
+  {
+   "method": "random",
+   "frac_above_median": 0.533,
+   "frac_positive": 0.545,
+   "n_mol": 105
+  },
+  {
+   "method": "readout",
+   "frac_above_median": 0.708,
+   "frac_positive": 0.929,
+   "n_mol": 105
+  },
+  {
+   "method": "saliency",
+   "frac_above_median": 0.51,
+   "frac_positive": 1.0,
+   "n_mol": 105
+  }
+ ],
+ "gin_seed123": {
+  "seed": 123,
+  "pooling": "sum",
+  "epochs": 94,
+  "sec": 159.4,
+  "val_MAE": 36.508,
+  "test_MAE": 38.2268
+ },
+ "seed3_gin": [
+  {
+   "method": "IG",
+   "42-123": 0.87,
+   "42-7": 0.802,
+   "7-123": 0.788,
+   "mean": 0.82
+  },
+  {
+   "method": "grad_x_input",
+   "42-123": 0.757,
+   "42-7": 0.676,
+   "7-123": 0.679,
+   "mean": 0.704
+  },
+  {
+   "method": "readout",
+   "42-123": 0.933,
+   "42-7": 0.903,
+   "7-123": 0.912,
+   "mean": 0.916
+  }
+ ],
+ "seed3_xgb": [
+  {
+   "pair": "42-43",
+   "rho_all": 0.98,
+   "top10_overlap": 9
+  },
+  {
+   "pair": "42-44",
+   "rho_all": 0.982,
+   "top10_overlap": 8
+  },
+  {
+   "pair": "43-44",
+   "rho_all": 0.979,
+   "top10_overlap": 9
+  }
+ ],
+ "gin_test_MAE_by_seed": {
+  "42": 38.0221,
+  "7": 37.3684,
+  "123": 38.2268
+ },
+ "gin_mean_seed42": {
+  "seed": 42,
+  "pooling": "mean",
+  "epochs": 54,
+  "sec": 97.0,
+  "val_MAE": 34.6849,
+  "test_MAE": 35.5356
+ },
+ "validate_mean_vs_sum": [
+  {
+   "index": "전체",
+   "n": 500.0,
+   "mean MAE": 34.7,
+   "sum MAE": 35.0,
+   "mean 평균잔차": -3.3,
+   "sum 평균잔차": -3.1,
+   "sum − mean": 0.3
+  },
+  {
+   "index": "원자 ≤ 10",
+   "n": 128.0,
+   "mean MAE": 35.3,
+   "sum MAE": 35.6,
+   "mean 평균잔차": -0.5,
+   "sum 평균잔차": 2.2,
+   "sum − mean": 0.3
+  },
+  {
+   "index": "원자 11–20",
+   "n": 267.0,
+   "mean MAE": 33.4,
+   "sum MAE": 32.8,
+   "mean 평균잔차": -4.4,
+   "sum 평균잔차": -7.8,
+   "sum − mean": -0.6
+  },
+  {
+   "index": "원자 > 20",
+   "n": 105.0,
+   "mean MAE": 37.3,
+   "sum MAE": 39.8,
+   "mean 평균잔차": -4.0,
+   "sum 평균잔차": 2.3,
+   "sum − mean": 2.4
+  },
+  {
+   "index": "비고리",
+   "n": 80.0,
+   "mean MAE": 35.3,
+   "sum MAE": 37.4,
+   "mean 평균잔차": -5.8,
+   "sum 평균잔차": -2.0,
+   "sum − mean": 2.1
+  },
+  {
+   "index": "비고리 & 원자 ≤ 10",
+   "n": 55.0,
+   "mean MAE": 35.9,
+   "sum MAE": 38.5,
+   "mean 평균잔차": -0.5,
+   "sum 평균잔차": 1.8,
+   "sum − mean": 2.5
+  },
+  {
+   "index": "mp < 250 K",
+   "n": 52.0,
+   "mean MAE": 31.3,
+   "sum MAE": 40.0,
+   "mean 평균잔차": 16.8,
+   "sum 평균잔차": 19.9,
+   "sum − mean": 8.8
+  },
+  {
+   "index": "mp > 500 K",
+   "n": 50.0,
+   "mean MAE": 63.0,
+   "sum MAE": 57.6,
+   "mean 평균잔차": -59.8,
+   "sum 평균잔차": -53.5,
+   "sum − mean": -5.4
+  }
+ ],
+ "runtime_sec_total": 1187.5
+}

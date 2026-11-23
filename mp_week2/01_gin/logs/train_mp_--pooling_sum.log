@@ -1,0 +1,34 @@
+[load_data] mp: 5,000 rows, unit = K
+[gen_dataset] 5,000 graphs, node features = 147, edge features = 16
+[split_dataset:random] train 4,000 / validate 500 / test 500
+[model] mp_GNN-GIN_sum_random: 147,009 parameters
+  epoch   0  train loss 0.7911  val MAE 64.408  lr 1.0e-03  *
+  epoch   1  train loss 0.5843  val MAE 52.692  lr 1.0e-03  *
+  epoch   3  train loss 0.5204  val MAE 52.480  lr 1.0e-03  *
+  epoch   5  train loss 0.4863  val MAE 50.618  lr 1.0e-03  *
+  epoch   6  train loss 0.4396  val MAE 45.548  lr 1.0e-03  *
+  epoch   8  train loss 0.4167  val MAE 43.931  lr 1.0e-03  *
+  epoch  10  train loss 0.3799  val MAE 48.241  lr 1.0e-03
+  epoch  12  train loss 0.3778  val MAE 43.583  lr 1.0e-03  *
+  epoch  18  train loss 0.3314  val MAE 42.019  lr 1.0e-03  *
+  epoch  20  train loss 0.3237  val MAE 42.254  lr 1.0e-03
+  epoch  21  train loss 0.3197  val MAE 41.904  lr 1.0e-03  *
+  epoch  22  train loss 0.3098  val MAE 40.304  lr 1.0e-03  *
+  epoch  25  train loss 0.3119  val MAE 40.103  lr 1.0e-03  *
+  epoch  28  train loss 0.2757  val MAE 39.012  lr 1.0e-03  *
+  epoch  30  train loss 0.2939  val MAE 39.601  lr 1.0e-03
+  epoch  36  train loss 0.2548  val MAE 38.153  lr 1.0e-03  *
+  epoch  38  train loss 0.2449  val MAE 37.160  lr 1.0e-03  *
+  epoch  40  train loss 0.2452  val MAE 37.955  lr 1.0e-03
+  epoch  47  train loss 0.2133  val MAE 36.898  lr 1.0e-03  *
+  epoch  50  train loss 0.2309  val MAE 38.659  lr 1.0e-03
+  epoch  51  train loss 0.2384  val MAE 36.052  lr 1.0e-03  *
+  epoch  60  train loss 0.2186  val MAE 36.301  lr 1.0e-03
+  epoch  70  train loss 0.2070  val MAE 38.173  lr 8.0e-04
+  epoch  78  train loss 0.1606  val MAE 35.927  lr 6.4e-04  *
+  epoch  80  train loss 0.1600  val MAE 37.759  lr 6.4e-04
+  epoch  85  train loss 0.1565  val MAE 35.615  lr 6.4e-04  *
+  epoch  90  train loss 0.1558  val MAE 38.086  lr 6.4e-04
+  epoch 100  train loss 0.1358  val MAE 36.140  lr 5.1e-04
+  epoch 110  train loss 0.1282  val MAE 36.480  lr 4.1e-04
+[test] mp_GNN-GIN_sum_random: MAE 36.390 | RMSE 50.647 | R2 0.714 | baseline MAE 75.151 | 116 epochs, 169 s

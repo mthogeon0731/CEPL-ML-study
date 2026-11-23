@@ -1,0 +1,13 @@
+[load_data] mp: 5,000 rows, unit = K
+[gen_dataset] 5,000 graphs, node features = 147, edge features = 16
+[split_dataset:scaffold] train 4,000 / validate 500 / test 500
+[model] mp_GNN-GIN_sum_scaffold: 147,009 parameters
+  epoch   0  train loss 0.7662  val MAE 48.929  lr 1.0e-03  *
+  epoch   4  train loss 0.4309  val MAE 47.854  lr 1.0e-03  *
+  epoch   5  train loss 0.4245  val MAE 47.086  lr 1.0e-03  *
+  epoch  10  train loss 0.3141  val MAE 52.303  lr 1.0e-03
+  epoch  15  train loss 0.2984  val MAE 46.466  lr 1.0e-03  *
+  epoch  20  train loss 0.2557  val MAE 50.210  lr 1.0e-03
+  epoch  30  train loss 0.2045  val MAE 51.880  lr 8.0e-04
+  epoch  40  train loss 0.1814  val MAE 50.775  lr 6.4e-04
+[test] mp_GNN-GIN_sum_scaffold: MAE 43.821 | RMSE 58.389 | R2 0.358 | baseline MAE 79.742 | 46 epochs, 73 s

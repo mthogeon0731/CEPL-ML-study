@@ -1,13 +1,13 @@
 feature,model,random,scaffold,scaffold - random
-Descriptor,XGBoost,29.966,37.769,7.803
-Descriptor,RandomForest,33.528,40.687,7.159
-Descriptor,MLP,34.397,53.579,19.182
-Descriptor,Ridge,35.371,45.085,9.714
-Descriptor,SVR,35.437,43.975,8.538
-Descriptor,kNN,38.48,51.685,13.205
-MorganFP,XGBoost,39.524,50.266,10.742
-MorganFP,RandomForest,40.94,55.495,14.555
-MorganFP,SVR,54.807,55.517,0.71
-MorganFP,Ridge,61.011,96.204,35.193
-MorganFP,MLP,67.019,143.124,76.105
-MorganFP,kNN,86.223,125.909,39.686
+Descriptor,XGBoost,27.382,35.858,8.476
+Desc+Morgan,XGBoost,27.615,36.208,8.593
+Desc+Morgan,RandomForest,29.5,39.822,10.322
+Descriptor,RandomForest,29.749,40.109,10.36
+Descriptor,MLP,31.234,51.987,20.753
+Desc+Morgan,Ridge,35.006,52.725,17.719
+Desc+Morgan,MLP,35.516,58.73,23.214
+Descriptor,Ridge,35.731,45.643,9.912
+MorganFP,RandomForest,35.974,53.155,17.181
+MorganFP,XGBoost,36.491,48.461,11.97
+MorganFP,MLP,42.107,79.575,37.468
+MorganFP,Ridge,42.744,61.399,18.655

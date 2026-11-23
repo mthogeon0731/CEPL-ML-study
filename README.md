@@ -10,6 +10,7 @@ KIST CEPL 학부연구생 ML 스터디(2026-11~) — **분자 물성 예측** �
 | [`mp_presentation/05_analysis_xai/xai_notes.md`](mp_presentation/05_analysis_xai/xai_notes.md) | 후분석(틀린 분자·구간별 오차) + SHAP |
 | [`mp_presentation/slides/mp_week1_발표_슬라이드.md`](mp_presentation/slides/mp_week1_발표_슬라이드.md) | 발표 슬라이드 10장 구성·링크·예상 질문 |
 | [`mp_presentation/results/run_notes.md`](mp_presentation/results/run_notes.md) | 모든 수치의 출처·실행 환경·재현 명령 |
+| [`mp_week2/README.md`](mp_week2/README.md) | **2주차** (GIN · 불확실성 · XAI) mp 재실행 결과 + 덱 정리(학습 설정 총정리) + mp XAI 노트 |
 
 **1주차 결과 한 줄** (표본 5,000, seed 42, test MAE K, **PC `mlstudy` 실행 = 발표 채택 수치**): 기준선 72.5 / 76.0 (random / scaffold) → 최저 **XGBoost + RDKit 기술자 29.5 / 37.4**; GIN(`train.py`, 80/10/10) 36.0 — 같은 test 500개에서 XGBoost+기술자 33.6 vs GIN 36.0 (3위; 차이 2.4 K는 부트스트랩 95 % CI [0.0, 4.7]로 경계선, scaffold에서는 36.5 vs 42.1로 5.6 K 뒤짐; 지문 모델 6종은 모두 이김).
 
@@ -35,6 +36,8 @@ CEPL ML/
 ├─ Context/                          40–41쪽 참고자료 PDF (README: 목록·상태·발표 절별 읽을 곳)
 ├─ env/                              42–46쪽 환경 설정 (한 번) — 00_설치안내.md 부터
 ├─ 261105_Week1_Practice/            47쪽 교수님 실습 폴더 자리 — zip을 여기에 풀기 (README: 파일 구성, 과제 4단계)
+├─ 261109_Week2_Practice/            2주차 실습 꾸러미 (+ [추가] *_mp.ipynb · *_executed · mp_xai_ext.py 등)
+├─ mp_week2/                         2주차 결과·공부 자료 (00 덱 정리 → 01 GIN → 02 불확실성 → 03 XAI)
 └─ mp_presentation/                  발표 작업 — 11쪽 흐름 = 폴더 순서
    ├─ README.md                      발표 구성(절 ↔ 폴더 ↔ 코드 함수), 5분 시간표, mp 특이사항, 체크리스트
    ├─ 01_data/                       SMILES 수집 — 데이터 카드 (무엇·몇 개·단위·분포·왜 어려운가)

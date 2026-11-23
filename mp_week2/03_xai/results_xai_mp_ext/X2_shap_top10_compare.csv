@@ -1,0 +1,11 @@
+,random 189,scaffold 189,random 217
+1,TPSA,TPSA,BertzCT
+2,BertzCT,BertzCT,TPSA
+3,RingCount,RingCount,NumHDonors
+4,NumHDonors,NumHDonors,RingCount
+5,NumRotatableBonds,NumRotatableBonds,NumRotatableBonds
+6,FractionCSP3,FractionCSP3,NHOHCount
+7,NHOHCount,fr_bicyclic,NOCount
+8,FpDensityMorgan3,NHOHCount,FractionCSP3
+9,fr_bicyclic,VSA_EState3,SlogP_VSA1
+10,VSA_EState4,VSA_EState4,VSA_EState3

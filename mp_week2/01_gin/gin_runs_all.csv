@@ -1,0 +1,17 @@
+run,seed,name,params,best_val_epoch,val_MAE,test_MAE,RMSE,R2,baseline,epochs,sec
+GIN mean random,42,mp_GNN-GIN_mean_random,147009,63,33.722,36.043,49.799,0.723,75.151,93,142
+GIN mean scaffold,42,mp_GNN-GIN_mean_scaffold,147009,15,44.478,41.373,54.396,0.442,79.742,45,60
+GIN sum random,42,mp_GNN-GIN_sum_random,147009,86,35.615,36.39,50.647,0.714,75.151,116,169
+GIN sum scaffold,42,mp_GNN-GIN_sum_scaffold,147009,6,44.325,43.939,57.889,0.369,79.742,36,48
+GINE mean random,42,mp_GNN-GINE_mean_random,170564,68,34.215,36.645,49.202,0.73,75.151,98,179
+GCN mean random,42,mp_GNN-GCN_mean_random,76801,129,34.111,34.978,48.761,0.735,75.151,159,229
+"GIN mean random, 1층",42,mp_GNN-GIN_mean_random,13697,45,35.734,36.268,48.164,0.741,75.151,75,23
+"GIN mean random, 3층",42,mp_GNN-GIN_mean_random,80961,47,33.637,36.588,49.656,0.725,75.151,77,75
+GIN mean random,123,mp_GNN-GIN_mean_random,147009,59,33.737,36.571,50.722,0.713,75.151,89,152
+GIN mean scaffold,123,mp_GNN-GIN_mean_scaffold,147009,13,44.432,42.903,55.333,0.423,79.742,43,70
+GIN sum random,123,mp_GNN-GIN_sum_random,147009,65,35.313,38.046,51.817,0.701,75.151,95,172
+GIN sum scaffold,123,mp_GNN-GIN_sum_scaffold,147009,16,46.466,43.821,58.389,0.358,79.742,46,73
+GIN mean random,7,mp_GNN-GIN_mean_random,147009,57,34.595,36.937,50.863,0.711,75.151,87,146
+GIN mean scaffold,7,mp_GNN-GIN_mean_scaffold,147009,32,43.091,42.733,54.804,0.434,79.742,62,97
+GIN sum random,7,mp_GNN-GIN_sum_random,147009,73,35.181,36.138,50.263,0.718,75.151,103,175
+GIN sum scaffold,7,mp_GNN-GIN_sum_scaffold,147009,4,45.191,45.429,58.057,0.365,79.742,34,52

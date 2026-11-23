@@ -1,0 +1,17 @@
+{
+ "prop": "mp",
+ "max_n": 5000,
+ "seed": 42,
+ "sec": {
+  "data": 8.4,
+  "RF": 104.9,
+  "GP": 41.0,
+  "BGNN": 97.2,
+  "AD": 137.2,
+  "AL": 549.5
+ },
+ "total_sec": 938.2,
+ "bgnn_epochs": 83,
+ "gp_kernel": "0.754**2 * Tanimoto() + WhiteKernel(noise_level=0.0659)",
+ "gp_noise_sd": 23.428963371387383
+}
