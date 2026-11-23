@@ -1,0 +1,5 @@
+﻿split,comparison,val_MAE,dedup_MAE,dMAE,ci_lo,ci_hi,dMAE_dedup,ci_lo_dedup,ci_hi_dedup
+random,F0+F3+F5 vs F0+F5,25.359,25.768,-0.109,-0.349,0.131,-0.112,-0.363,0.145
+random,F0+F3+F5 vs F0+F3,25.359,25.768,-0.625,-0.847,-0.403,-0.649,-0.873,-0.437
+scaffold,F0+F3+F5 vs F0+F5,35.238,35.225,-0.205,-0.577,0.16,-0.22,-0.571,0.137
+scaffold,F0+F3+F5 vs F0+F3,35.238,35.225,-0.223,-0.444,0.002,-0.229,-0.45,-0.019

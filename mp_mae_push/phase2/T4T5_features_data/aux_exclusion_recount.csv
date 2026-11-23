@@ -1,0 +1,26 @@
+﻿aux,n_aux,split,mp_set,n_mp,mp_in_aux_full,mp_in_aux_block1
+logSolubility,11172,random,validate,1995,407.0,442
+logSolubility,11172,random,test,1995,412.0,445
+logSolubility,11172,scaffold,validate,1994,319.0,353
+logSolubility,11172,scaffold,test,1995,307.0,339
+logSolubility,11172,both,validate+test 첫 블록 (보조 행 삭제 수),7076,,1621
+logP,14031,random,validate,1995,381.0,427
+logP,14031,random,test,1995,411.0,450
+logP,14031,scaffold,validate,1994,304.0,362
+logP,14031,scaffold,test,1995,255.0,295
+logP,14031,both,validate+test 첫 블록 (보조 행 삭제 수),7076,,1355
+density,8746,random,validate,1995,486.0,526
+density,8746,random,test,1995,483.0,523
+density,8746,scaffold,validate,1994,287.0,323
+density,8746,scaffold,test,1995,213.0,234
+density,8746,both,validate+test 첫 블록 (보조 행 삭제 수),7076,,1457
+logPvap,3092,random,validate,1995,209.0,222
+logPvap,3092,random,test,1995,219.0,230
+logPvap,3092,scaffold,validate,1994,113.0,122
+logPvap,3092,scaffold,test,1995,125.0,129
+logPvap,3092,both,validate+test 첫 블록 (보조 행 삭제 수),7076,,692
+bp,2159,random,validate,1995,148.0,157
+bp,2159,random,test,1995,147.0,152
+bp,2159,scaffold,validate,1994,18.0,19
+bp,2159,scaffold,test,1995,21.0,21
+bp,2159,both,validate+test 첫 블록 (보조 행 삭제 수),7076,,337

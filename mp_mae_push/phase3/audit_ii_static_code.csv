@@ -1,0 +1,6 @@
+code,imports,reads_files,label_refs,llm_calls,external_mp
+F0 train_xgb.featurize,"argparse,matplotlib,numpy,os,pandas,random,rdkit,time,xgboost",True,10,0,0
+GIN graph feature.py,"numpy,rdkit,torch",False,0,0,0
+F3 phys_feats.py,"numpy,rdkit",False,0,0,0
+F5 f5_rules.py,"math,numpy,rdkit",False,0,0,0
+O3/F1 s2_features.py,"numpy,os,pandas,rdkit,sys,t1lib",True,4,0,0

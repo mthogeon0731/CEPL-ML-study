@@ -1,0 +1,10 @@
+split,cand,전체,중복 제거,rank_differs
+random,A,1.0,2.0,True
+random,B,2.0,1.0,True
+random,C,3.0,3.0,False
+random,base_orig,4.0,4.0,False
+random,base_sbx,5.0,5.0,False
+scaffold,A,1.0,1.0,False
+scaffold,B,2.0,2.0,False
+scaffold,C,3.0,3.0,False
+scaffold,base_sbx,4.0,4.0,False

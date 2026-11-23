@@ -1,0 +1,7 @@
+feature,n_rows,max_abs_diff,rel_ok
+F0 RDKit217,150,0.0,True
+F5 LLM 규칙 101,150,0.0,True
+F1 Morgan count,150,0.0,True
+O3 입체 15,150,0.0,True
+F3 물리·결정 (2D 열),25,0.0,True
+F3 물리·결정 (3D 열),25,0.0,True

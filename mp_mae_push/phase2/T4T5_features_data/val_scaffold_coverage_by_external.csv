@@ -1,0 +1,3 @@
+split,set,n,n_acyclic_scaffold,scf_in_mp_train,scf_in_external,scf_in_external_not_train
+random,validate,1995,324,1399,1313,91
+scaffold,validate,1994,0,0,889,889

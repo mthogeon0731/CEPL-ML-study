@@ -1,0 +1,5 @@
+script,line,text
+phase2\prereg\05_preregister.py,36,"for part in ('validate', 'test'):"
+phase2\prereg\05_preregister.py,44,"for part in ('validate', 'test'):"
+phase2\prereg\05_preregister.py,66,print(c[c.mp_set == 'test'].to_string(index=False))
+phase2\T4T5_features_data\step3_aux.py,42,"for st in ('validate', 'test'):"

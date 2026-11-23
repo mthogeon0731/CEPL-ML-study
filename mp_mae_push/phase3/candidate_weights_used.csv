@@ -1,0 +1,9 @@
+cand,name,split,weight_sum_spec,weights_normalized
+A,A_wavg_mse_noO2,random,1.0001,xgb600_F0F1O3=0.019598;lgb_r1_F0F5=0.123188;h06_yalk_F0F3F5=0.469553;gin_hybrid_seedavg=0.387661
+A,A_wavg_mse_noO2,scaffold,1.0,h06_yalk_F0F3F5=0.310000;xgb600_F0_patent1x_scaf=0.317800;gin_hybrid_seedavg=0.372200
+B,B_fixed_mean_best_GIN,random,1.0,lgb_r1_F0F3F5=0.500000;gin_hybrid_seedavg=0.500000
+B,B_fixed_mean_best_GIN,scaffold,1.0,lgb_r1_F0F3F5=0.500000;gin_hybrid_seedavg=0.500000
+B_alt,Balt_lgb_r1_F0F3F5,random,1.0,lgb_r1_F0F3F5=1.000000
+B_alt,Balt_lgb_r1_F0F3F5,scaffold,1.0,lgb_r1_F0F3F5=1.000000
+C,C_xgb600_F0F5_M2,random,1.0,xgb600_F0F5_M2=1.000000
+C,C_xgb600_F0F5_M2,scaffold,1.0,xgb600_F0F5_M2=1.000000

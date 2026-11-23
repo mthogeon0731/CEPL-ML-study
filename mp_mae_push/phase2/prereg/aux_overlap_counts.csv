@@ -1,0 +1,26 @@
+aux,n_aux,split,mp_set,n_mp,mp_in_aux_full,mp_in_aux_block1
+logSolubility,11172,random,validate,1994,406.0,438
+logSolubility,11172,random,test,1995,412.0,442
+logSolubility,11172,scaffold,validate,1991,317.0,324
+logSolubility,11172,scaffold,test,1991,304.0,336
+logSolubility,11172,both,validate+test (제외 대상),7076,,1621
+logP,14031,random,validate,1994,380.0,421
+logP,14031,random,test,1995,411.0,447
+logP,14031,scaffold,validate,1991,303.0,335
+logP,14031,scaffold,test,1991,252.0,292
+logP,14031,both,validate+test (제외 대상),7076,,1355
+density,8746,random,validate,1994,486.0,520
+density,8746,random,test,1995,483.0,521
+density,8746,scaffold,validate,1991,286.0,297
+density,8746,scaffold,test,1991,213.0,234
+density,8746,both,validate+test (제외 대상),7076,,1457
+logPvap,3092,random,validate,1994,209.0,219
+logPvap,3092,random,test,1995,219.0,230
+logPvap,3092,scaffold,validate,1991,113.0,115
+logPvap,3092,scaffold,test,1991,125.0,129
+logPvap,3092,both,validate+test (제외 대상),7076,,692
+bp,2159,random,validate,1994,148.0,155
+bp,2159,random,test,1995,147.0,152
+bp,2159,scaffold,validate,1991,18.0,18
+bp,2159,scaffold,test,1991,21.0,21
+bp,2159,both,validate+test (제외 대상),7076,,337

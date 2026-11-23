@@ -1,0 +1,3 @@
+Describe the chemical structure of the molecule given by the SMILES below in 3 to 5 plain English sentences (about 80-150 words). Cover only structural features: the skeleton or scaffold, ring systems and ring fusion, functional groups, substitution pattern, molecular symmetry, rigidity or flexibility, and hydrogen-bond donor and acceptor capability. Do NOT state any numerical physical or chemical property value. Do not mention melting point, boiling point, density, solubility, vapor pressure, physical state at room temperature, uses, applications, hazards, or the common or trade name of the compound. Output only the description.
+
+SMILES: {smi}

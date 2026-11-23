@@ -1,0 +1,13 @@
+rule,n
+kept,194865
+n_records,228174
+r2_inequality_approx,6586
+r3_value_format,1
+r4_range_gt5K,7051
+r5_unit_F,2
+r5_unit_bare_degree,19590
+r5_unit_none,68
+r6_outside_50_800K,1
+r7_heavy_gt100,6
+r7_multi_fragment,1
+r7_rdkit_unreadable,3

@@ -1,0 +1,19 @@
+split,pair,full_key_shared,block1_shared,rows_in_b_full,rows_in_b_block1
+random,train–validate,6,71,6,73
+random,train–test,8,89,8,92
+random,validate–test,0,12,0,14
+random,train 안,33,382,,
+random,validate 안,1,9,,
+random,test 안,0,6,,
+scaffold,train–validate,7,8,7,8
+scaffold,train–test,5,6,5,6
+scaffold,validate–test,6,6,6,6
+scaffold,train 안,23,469,,
+scaffold,validate 안,3,72,,
+scaffold,test 안,4,4,,
+random,특허 정제본–train,0,0,0,0
+random,특허 정제본–validate,0,0,0,0
+random,특허 정제본–test,0,0,0,0
+scaffold,특허 정제본–train,0,0,0,0
+scaffold,특허 정제본–validate,0,0,0,0
+scaffold,특허 정제본–test,0,0,0,0

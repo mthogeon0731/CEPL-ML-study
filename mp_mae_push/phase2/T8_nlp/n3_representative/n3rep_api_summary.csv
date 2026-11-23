@@ -1,0 +1,2 @@
+calls,molecules_targeted,val_targets,train_targets,ok_val,ok_train,input_tokens,output_tokens,tokens_in_out,cache_read,cache_create,usd,gen_wall_s,model
+3450,3422,1636,1786,1634,1785,856454,935569,1792023,16840602,19548,0.72575,2392,claude-haiku-5-5

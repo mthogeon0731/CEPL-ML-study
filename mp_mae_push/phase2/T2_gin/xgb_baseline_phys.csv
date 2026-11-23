@@ -1,0 +1,3 @@
+split,model,n_lt0,n_lt50,pred_min
+random,xgb_baseline_single,0,0,121.33452
+scaffold,xgb_baseline_single,0,0,139.38826

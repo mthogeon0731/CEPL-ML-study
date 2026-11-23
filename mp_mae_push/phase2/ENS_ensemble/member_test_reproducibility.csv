@@ -1,0 +1,15 @@
+member,track,recipe,features,seeds,refit_core_h_random,refit_core_h_scaffold,feature_core_h_if_missing,llm_calls_at_test,test_ready,notes
+baseline_xgb600_F0,P1,"mpcommon.BASE_XGB, n_jobs=8, random_state 42 (train_xgb.run 과 같음)","F0 (cache/X_desc217.npy, 19,945행 전부 있음)",42 (1개),0.0202,0.0177,0.118,없음,예 — 원본 test 예측 파일도 존재(목표 A 기준),기준선 자체
+xgb600_F0_bag10,T1,"BASE_XGB, n_jobs=8, seed 0–9 평균 (T1 s1_seed_loss.py)",F0,0–9,0.151,0.13,0.118,없음,예 (재적합 필요),앙상블 가중치 0
+lgb_r1_F0,T1,"t1blib.CFG lgb_r1, 나무 random 3,688 / scaffold 2,978",F0,"0,1,2",0.315,0.276,0.118,없음,예 (재적합 필요),앙상블 가중치 0
+xgb_r1_F0,T1,"t1blib.CFG xgb_r1, 나무 7,057 / 3,489, n_jobs 8",F0,"0,1,2",0.554,0.253,0.118,없음,예 (재적합 필요),앙상블 가중치 0
+xgb600_F0F1O3,T1,"BASE_XGB, colsample random 0.5 / scaffold 0.3",F0+F1(Morgan count)+O3(입체 15열),"0,1,2",0.229,0.237,0.129,없음,예 (F1·O3 재계산 또는 T1 캐시),wavg_mse random 가중 0.02
+lgb_r1_F0F3F5,T1b,"ENS/inputs/train_candidate.py (lgb_r1, 나무 3,688 / 2,978, num_threads 6)",F0+F3(X_phys.npy)+F5(F5_rules.npy),"0,1,2",0.5,0.365,3.4,없음 (F5는 고정 RDKit 규칙 코드),예 (train_candidate.py에 test 경로 있음),최선 단일
+lgb_r1_F0F5,T1b,"train_candidate.py, --fs F0+F5",F0+F5,"0,1,2",0.426,0.331,0.143,없음,예,3D 배좌 불필요
+h06_yalk_F0F3F5,T1b,"ENS/inputs/s2_yalk.py (a random 65 / scaffold 40, c 2.435, σ3d_max_log, τ clip0, S_floor 10; 나무 4,588 / 3,304)",F0+F3+F5,"0,1,2",0.5,0.326,3.4,없음,조건부 — s2_yalk.py에 test 예측 경로를 더해야 함(T1b README),wall 1.6배
+xgb600_F0F5_M2,T8,"BASE_XGB, n_jobs 8 (T8 t8eval)",F0+F5,"42,0,1",0.043,0.037,0.143,"없음 (LLM은 규칙 제안 2회뿐, 이미 끝남)",예,scaffold OOF는 무작위 KFold → OOF 가중치 적합에서 뺌
+xgb600_F0F3,T4,"BASE_XGB, n_jobs 8",F0+F3,"42,43,44",0.11,0.11,3.375,없음,예,refit 비용은 ledger F0+F3 행 평균의 근사
+xgb600_F0aux4_scaf,T4,"BASE_XGB + 보조 물성 예측 4열 (보조 모델 5-fold, PREREG 3절)",F0+aux4,"42,43,44",,0.039,3.23,없음,예 (X_aux5.npy 캐시),scaffold 전용; 앙상블 가중치 ≈0
+xgb600_F0_patent1x_scaf,T5,"BASE_XGB, train + 특허 무작위 15,956분자(표본 seed = 모델 seed), T5 step5_curve.py",F0 (외부 분자 기술자 cache/X_ext_desc217.npy),"42,43,44",,0.06,0.303,없음,예 (T5 캐시 필요; 없으면 다운로드 638 MB + 파싱),scaffold 전용(random에서는 해로움)
+gin_hybrid_seedavg,T2,"T2 train_hybrid.py (GIN mean + 기술자 readout, 1스레드, 내부 10 % 조기 종료)",graph147 + F0,"0,1,2",3.044,1.063,0.144,없음,재학습 필요 — 가중치 미저장. 같은 seed 재학습의 동일성은 미확인 → validation 예측을 다시 만들어 저장본과 대조해야 함,앙상블 이득의 주원천 (오차 상관 0.87–0.90)
+O2_knn,ENS,"ENS/s1_knn.py (Morgan r2 2048, k random 10 / scaffold 20, sim^4 가중)",Morgan 비트,결정적,0.04,0.04,0.0,없음,예 (학습 없음; 지문 + 유사도만),앙상블 기여 없음

@@ -1,0 +1,9 @@
+You are given experimental melting points (K) of structurally similar molecules. Predict the melting point of the query molecule.
+
+Examples (SMILES<TAB>melting point in K):
+<k nearest train neighbours by Morgan r2 2048 Tanimoto, most similar first>
+
+Query: <SMILES>
+Predict its melting point in kelvin.
+
+도구 호출 강제: {"name": "report_melting_point", "description": "Report the predicted melting point of the query molecule.", "input_schema": {"type": "object", "properties": {"melting_point_K": {"type": "number", "description": "predicted melting point in kelvin"}}, "required": ["melting_point_K"]}}

@@ -1,0 +1,18 @@
+﻿group,n_has,n_said,said_but_absent,present_not_said
+aldehyde,13,13,0,0
+amide,77,56,1,22
+bromine,30,30,0,0
+carboxylic acid,68,69,1,0
+chlorine,77,77,0,0
+ester,58,67,11,2
+fluorine,55,56,1,0
+furan,11,13,2,0
+iodine,3,3,0,0
+ketone,51,47,3,7
+nitrile,27,27,0,0
+nitro,56,56,0,0
+phenol/hydroxyl,156,128,1,29
+pyridine,34,32,3,5
+sulfonamide,14,12,0,2
+sulfur,68,65,0,3
+thiophene,7,7,0,0

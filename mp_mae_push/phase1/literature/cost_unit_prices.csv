@@ -1,0 +1,26 @@
+﻿분류,항목,값,단위·조건,출처 URL,조회일,확인 수준
+CPU,Intel Core i5-1335U Processor Base Power,15,W,https://www.intel.com/content/www/us/en/products/sku/232153/intel-core-i51335u-processor-12m-cache-up-to-4-60-ghz/specifications.html,2026-11-20,제조사 사양 페이지(검색 발췌)
+CPU,Intel Core i5-1335U Maximum Turbo Power,55,W (1초 이상 지속 가능한 최대; 제조사별 설정 가능),위와 같음,2026-11-20,제조사 사양 페이지(검색 발췌)
+CPU,Intel Core i5-1335U Minimum Assured Power,12,W,위와 같음,2026-11-20,제조사 사양 페이지(검색 발췌)
+CPU,코어 구성,10코어(P 2 + E 8) / 12스레드,—,위와 같음,2026-11-20,제조사 사양 페이지(검색 발췌)
+전기,한전 주택용(저압) 전력량요금 1구간,120.0,"원/kWh, 월 200 kWh 이하(7–8월은 300 kWh 이하)","https://jeongi.ocp.kr/ (한전 요금표 2023-05-16 조정분, 2026년 4분기 현행이라고 기재)",2026-11-20,2차(한전 요금표 인용 사이트 5곳 일치). 한전 누리집 직접 조회는 안 함
+전기,한전 주택용(저압) 전력량요금 2구간,214.6,"원/kWh, 201–400 kWh(7–8월 301–450)",위와 같음,2026-11-20,2차
+전기,한전 주택용(저압) 전력량요금 3구간,307.3,"원/kWh, 400 kWh 초과(7–8월 450 초과)",위와 같음,2026-11-20,2차
+전기,기본요금,"910 / 1,600 / 7,300",원/호·월 (구간별),위와 같음,2026-11-20,2차
+전기,기후환경요금 / 연료비조정요금,9.0 / +5.0,원/kWh (2026년 4분기),https://www.make2t.kr/2026/10/electricity-bill-calculator-progressive-tariff.html,2026-11-20,2차
+전기,부가가치세 / 전력산업기반기금,10 % / 2.7 %,전기요금계에 가산,위와 같음,2026-11-20,2차. 기금 요율은 다른 사이트(2026-05 게시)가 3.7 %로 적어 출처 간 불일치 → 2026년 4분기 기준이라고 밝힌 2.7 %를 채택
+환율,원/달러 매매기준율,"1,336.2","원/USD, 2026-11-20 15:30",https://www.snmnews.com/news/articleView.html?idxno=577731,2026-11-20,언론 보도
+클라우드 CPU,"AWS m7i.large (2 vCPU, 8 GiB)",0.1008,"USD/h, us-east-1, Linux on-demand → 0.0504 USD/vCPU-h",https://cloud-credits.org/prices/ec2 (AWS Price List 2026-10-19 확인이라고 기재),2026-11-20,2차 집계
+클라우드 CPU,"AWS m7i.xlarge (4 vCPU, 16 GiB)",0.2016,"USD/h, us-east-1 → 0.0504 USD/vCPU-h",https://www.devzero.io/blog/ec2-instance-pricing (2026-11-19 갱신),2026-11-20,2차 집계 2곳 일치
+클라우드 CPU,"GCP n2-standard-4 (4 vCPU, 16 GB)",0.2233708,USD/h → 0.0558 USD/vCPU-h. 리전 표기 불명확,https://cloud.google.com/products/gemini-enterprise-agent-platform/pricing,2026-11-20,"공식 페이지(검색 발췌), 리전 미확인"
+클라우드 CPU,Modal CPU,0.0000131,USD/물리 코어·초 = 0.04716 USD/코어-h (1 코어 = 2 vCPU → 0.0236 USD/vCPU-h); 메모리 0.00000222 USD/GiB·초,https://continuumcode.ai/guides/modal-pricing/,2026-11-20,2차 집계 4곳 일치. modal.com 직접 조회는 안 함
+클라우드 GPU,"T4급: AWS g4dn.xlarge (T4 1개, 4 vCPU, 16 GiB)",0.526,"USD/h, us-east-1 on-demand",https://cloud-credits.org/prices/ec2,2026-11-20,2차 집계 4곳 일치
+클라우드 GPU,"T4급: GCP T4 (GPU만, VM 별도)",0.35,USD/GPU-h,https://cloud.google.com/products/compute/gpus-pricing,2026-11-20,공식 페이지(검색 발췌)
+클라우드 GPU,T4급: Modal T4,0.000164,USD/초 = 0.59 USD/h (CPU·메모리 별도),https://www.morphllm.com/modal-pricing,2026-11-20,2차 집계 5곳 일치
+클라우드 GPU,A10G/L4급: AWS g5.xlarge (A10G 1개),1.006,"USD/h, us-east-1",https://glassity.cloud/blog/aws-ec2-pricing-guide/,2026-11-20,2차 집계 3곳 일치
+클라우드 GPU,A10G/L4급: AWS g6.xlarge (L4 1개),0.8048,"USD/h, us-east-1",https://cloud-credits.org/prices/ec2,2026-11-20,2차 집계 2곳 일치
+클라우드 GPU,"A10G/L4급: GCP g2-standard-4 (L4 1개, 4 vCPU, 16 GB)",0.7068,"USD/h, us-central1",https://cloudgpuprices.com/vendors/google-cloud (2026-10-01 기준),2026-11-20,2차 집계 3곳 일치(0.70–0.71)
+클라우드 GPU,A10G/L4급: Modal L4 / A10,0.80 / 1.10,USD/h (0.000222 / 0.000306 USD/초),https://continuumcode.ai/guides/modal-pricing/,2026-11-20,2차 집계
+클라우드 GPU,"A100급: GCP a2-highgpu-1g (A100 40 GB 1개, 12 vCPU, 85 GB)",3.67,"USD/h, us-central1",https://computeprices.com/providers/google (2026-11-14 갱신),2026-11-20,2차 집계 3곳 일치
+클라우드 GPU,A100급: Modal A100 40 GB / 80 GB,2.10 / 2.50,USD/h (0.000583 / 0.000694 USD/초),https://continuumcode.ai/guides/modal-pricing/,2026-11-20,2차 집계 4곳 일치(다른 한 곳은 2026-05 기준 3.40으로 기재)
+클라우드 GPU,A100급: AWS 단일 A100 인스턴스,미확인,AWS는 A100을 8개 묶음(p4d)으로만 제공하는 것으로 알고 있으나 단가를 조회하지 못함,—,2026-11-20,미확인

@@ -1,0 +1,14 @@
+item,n
+FromLiterature=false,228102
+FromLiterature=true,72
+SuspiciousValue=false,228174
+field:FromLiterature,228174
+field:OriginalText,228174
+field:Paragraph,228174
+field:Patent,228174
+field:QuantityType,228174
+field:SMILES,228174
+field:StdInChIKey,228174
+field:SuspiciousValue,228174
+field:Value,228174
+inchikey_equals_StdInChIKey,194708

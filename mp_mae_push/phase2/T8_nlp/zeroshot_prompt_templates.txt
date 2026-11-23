@@ -1,0 +1,12 @@
+# v1 (거부 395/396)
+What is the experimental melting point of the compound with SMILES {smi}? Reply with a single number in kelvin and nothing else.
+What is the experimental melting point of {name}? Reply with a single number in kelvin and nothing else.
+
+# v2 (best estimate 허용)
+Give your best estimate of the experimental melting point, in kelvin, of the compound with SMILES {smi}. Even if you are not certain, reply with a single number only, with no units and no other text.
+Give your best estimate of the experimental melting point, in kelvin, of {name}. Even if you are not certain, reply with a single number only, with no units and no other text.
+
+# v3 (도구 호출 강제, 숫자 필드 melting_point_K) — 분석에 쓴 판
+Estimate the experimental melting point, in kelvin, of the compound with SMILES {smi}. Give your best estimate even if you are not certain.
+Estimate the experimental melting point, in kelvin, of {name}. Give your best estimate even if you are not certain.
+{"name": "report_melting_point", "description": "Report your best estimate of the experimental melting point.", "input_schema": {"type": "object", "properties": {"melting_point_K": {"type": "number", "description": "best estimate of the experimental melting point in kelvin"}}, "required": ["melting_point_K"]}}

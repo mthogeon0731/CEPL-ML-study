@@ -1,0 +1,16 @@
+﻿문헌,지시서의 주장,원문에서 확인한 내용,판정,확인 출처
+"Tetko 2014, JCIM 54:3320",47k 화합물,"초록 “more than 47k”; 세트별 21,883 + 22,404 + 3,041 + 277 = 47,605",일치,"원문(PMC4702524), https://doi.org/10.1021/ci5005288"
+Tetko 2014,consensus RMSE < 33 °C (50–250 °C),초록에 33 °C 미만으로 명시. 본문 최종 모델은 세트별 31.5–33.7 °C(일부 세트는 33을 조금 넘음). OCHEM만으로 학습한 consensus의 같은 구간 값은 31–34.8 °C,"일치(단서: 병합 최종 모델 기준, 세트별로는 33.7까지)",원문
+Tetko 2014,이상치 제거는 consensus 결과에 거의 영향 없음,초록·표 1: 개별 모델은 좋아지지만 consensus는 유의한 변화 없음(예: Bradley 33.9 → 33.9),일치,원문
+Tetko 2014,distance-to-model로 이상치를 표시하지 못함,세 가지 DM 모두 MP가 적용 영역 밖인 분자를 표시하지 못했다고 명시(부정적 결과로 보고),일치,원문
+"Tetko 2016, J. Cheminform. 8:2",특허에서 약 30만 MP,"수집 “Almost 300,000 data points”; 모델 학습에 쓴 PATENTS 세트는 241,958(비분해 228,173)",일치(단서: 학습 세트는 24.2만),"원문(PMC4724158), https://doi.org/10.1186/s13321-016-0113-y"
+Tetko 2016,"추정 실험 정확도 32 °C, consensus 정확도가 이와 비슷",σ = 32 °C는 50–250 °C(drug-like) 구간 값. 전체 PATENTS는 σ = 35 °C(보정 전 38 °C). CV RMSE 36.3 °C(전체) vs σ 35; drug-like CV RMSE 33 vs σ 33.3,일치(단서: 32 °C는 drug-like 구간 한정),원문
+"Austermeier 2025, ACS Omega 10:24296",같은 Bradley 데이터,"Bradley 28,645 → 중복·“do not use” 제거 19,995, random 70/20/10",일치,"원문(PMC12177604), https://doi.org/10.1021/acsomega.5c00205"
+Austermeier 2025,GNN + SMILES 변형·tautomer 증강 consensus RMSE 35.4 °C (증강 없이 37.8 °C),"표: 증강 없음 37.8(초기 데이터)/38.0(정제 데이터), 증강 35.4/35.4; test n = 1,961",일치,원문
+Austermeier 2025,"학습과 겹치는 분자 제거 전 19.0 → 제거 후 32.4 °C (Bradley 문헌 세트 2,886개)","Bradley 정제 세트 2,886개 중 2,604개가 학습·검증에 포함 → 19.0 °C; 제거 후 재학습 32.4 °C. Bergström도 17.7 → 36.9 °C",일치,원문
+Austermeier 2025,실험 불확도 약 35 °C를 실질적 하한으로 봄,서론에서 실험 정확도가 35 °C 범위이므로 예측 오차 한계를 약 35 °C로 가정한다고 기술,일치,원문
+"Jablonka 2024, Nat. Mach. Intell. 6:161",화학 질문을 자연어로 바꿔 GPT-3 미세조정; 기존 ML과 비슷하거나 나았고 특히 저데이터에서 강점,"초록·본문 일치. 단서 세 가지: (1) 회귀는 더 많은 데이터가 필요하고 이점이 줄어든다고 본문이 명시, (2) 고데이터 영역에서는 기존 ML이 따라잡음, (3) 녹는점 과제는 본문에 없음(본문 PDF에서 melting 0회; SI는 미확인)",일치(단서 있음),"원문 PDF, https://doi.org/10.1038/s42256-023-00788-1"
+"Balaji 2023, arXiv 2310.03030 (GPT-MolBERTa)",ChatGPT로 분자 설명문을 만들어 RoBERTa 학습; 회귀에서 최고 수준 근접; 설명문에 밀도 같은 물성 포함,"ChatGPT-3.5 설명문 32.6만 건으로 MLM 사전학습 후 MoleculeNet 미세조정. scaffold 80/10/10 RMSE: FreeSolv 0.896, ESOL 0.477, Lipophilicity 0.758(Lipophilicity는 D-MPNN 0.65보다 나쁨). 그림 1 설명에 설명문이 작용기·분자량·밀도 등의 성질을 담는다고 명시",일치,"arXiv HTML v3, https://arxiv.org/abs/2310.03030"
+"Zheng 2025, Nat. Mach. Intell. 7:437 (LLM4SD)",LLM이 문헌 지식·데이터에서 규칙을 뽑아 해석 가능한 특징으로 만들고 기존 모델에 입력,서지(7:437–447) 일치. 방법 일치: 지식 종합 + 데이터 추론 규칙 → 벡터 특징 → RF/선형 모델. 확인한 본문은 arXiv 2310.07984 v1이며 출판본 본문은 미확인,일치(본문은 arXiv판으로 확인),"CrossRef + arXiv PDF, https://doi.org/10.1038/s42256-025-00994-z"
+"Jacobs 2024, arXiv 2409.06080",SMILES로 미세조정한 LLaMA 3가 분자 물성 회귀에서 쓸 만한 결과,초록 일치. 단서: 과제는 QM9(형성 에너지 등)와 재료 물성 28종; RF·완전연결망과 비슷하고 최신 모델보다 오차 5–10배; 미세조정에 GPU 수 시간(RF는 CPU 수 초),일치(단서 있음),"arXiv PDF v2, https://arxiv.org/abs/2409.06080"
+지시서 2절 환산,문헌 RMSE 32–35 °C ≈ MAE 24–26 K (비 1.34),"RMSE/MAE 비: 우리 1.341, Huang 2025 1.289, Pu 2026 1.300, Dubonos 2026 1.322 → 32–35 °C는 MAE 23.9–27.1 K",일치(범위가 약간 넓어짐),계산
